@@ -47,20 +47,71 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
-
 const int mxN = 2e6 + 5;
 
-inline void init() {
-    // initialize global variable
+int n, a[mxN], sz[mxN], vis[mxN], dep[mxN];
+vector<int> g[mxN], gp[mxN];
 
+int sub;
+int dfs0(int u) {
+    sz[u] = 1;
+    vis[u] = 1;
+    int one = (u == 1);
+    for (int v : gp[u]) {
+        dep[v] = dep[u] + 1;
+        one |= dfs0(v);
+        sz[u] += sz[v];
+    }
+    if (u != 0 && one) sub += sz[u];
+    return one;
+}
+
+int cnt1 = 0;
+void dfs1(int u) {
+    vis[u] = 1;
+    cnt1++;
+    for (int v : g[u]) {
+        if (vis[v]) continue;
+        dfs1(v);
+    }
 }
 
 inline void solve() {
-    init();
+    cin >> n;
 
+    sub = 0;
+    for (int i = 0; i <= n; i++) {
+        g[i].clear();
+        gp[i].clear();
+        dep[i] = 0;
+        sz[i] = 1;
+        vis[i] = 0;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        if (i + a[i] < 1 or i + a[i] > n) {
+            g[i].eb(0);
+            gp[0].eb(i);
+        } 
+        else {
+            g[i].eb(i + a[i]);
+            gp[i + a[i]].eb(i);
+        }
+    }
+
+    dfs0(0);
+    if (vis[1]) {
+        cout << (2 * n + 1) * n - sub - dep[1] * (n - sz[0] + 1) << '\n'; 
+    } else {
+        cnt1 = 0;
+        dfs1(1);
+        cout << cnt1 * (n + 1 + sz[0] - 1) << '\n';
+    }
 }
 
 signed main() {
 	IO;	
-	solve();	
+    int T; cin >> T;
+	while (T--) solve();	
 }

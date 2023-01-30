@@ -47,20 +47,18 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
-
 const int mxN = 2e6 + 5;
 
-inline void init() {
-    // initialize global variable
 
-}
 
 inline void solve() {
-    init();
-
+    int n; cin >> n;
+    if (n % 2 == 0) cout << 1 << ' ' << n / 2 << '\n';
+    else cout << -1 << '\n';
 }
 
 signed main() {
 	IO;	
-	solve();	
+    int T; cin >> T;
+	while(T--) solve();	
 }

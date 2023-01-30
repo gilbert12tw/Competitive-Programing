@@ -47,20 +47,38 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
-
 const int mxN = 2e6 + 5;
 
-inline void init() {
-    // initialize global variable
-
-}
-
 inline void solve() {
-    init();
+    int n; cin >> n;
+    int sum = 0;
+    vector<pii> fac;
+    int mx = 1;
+    for (int i = 2; i * i <= n; i++) {
+        int cnt = 0;
+        while (n != 1 && n % i == 0) {
+            n /= i;
+            cnt++;
+        }
+        if (cnt) fac.eb(i, cnt);
+        mx = max(mx, cnt);
+    }
 
+    if (n != 1) fac.eb(n, 1);
+    
+    for (int i = 1; i <= mx; i++) {
+        int p = 1;
+        for (auto [val, cnt] : fac) {
+            if (cnt >= i) p *= val;
+        }
+        sum += p;
+    }
+
+    cout << sum << '\n';
 }
 
 signed main() {
 	IO;	
-	solve();	
+    int T; cin >> T;
+	while (T--) solve();	
 }

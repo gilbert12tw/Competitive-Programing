@@ -68,13 +68,14 @@ inline void solve() {
     for (int i = 0; i <= n; i++) g[i].clear(), dis[i] = n;
 
     vector<int> c(n-1);
+
     for (int &i : c) cin >> i;
+
     for (int i = 1; i < n; i++) {
         int u, v; cin >> u >> v;
         g[u].eb(v);
         g[v].eb(u);
     }
-
 
     int len = n - 1;
     dfs(c0, 0, len, 0);
