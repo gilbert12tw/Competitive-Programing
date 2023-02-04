@@ -33,3 +33,6 @@
 
 # for Mac
 *.out.dSYM
+
+# Contest
+Contest/*
