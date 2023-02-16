@@ -47,21 +47,58 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
-const int mxN = 2e6 + 5;
 
+const int mxN = 2e5 + 5;
 
+int n, m;
+
+class LC_tree {
+private:
+    struct Line {
+        pii line;
+        int ls = 0, rs = 0;
+    } seg[mxN * 15];
+    inline int cal(pii l, int x) {
+        return l.first * x + l.second;
+    }
+    int tot = 0;
+public:
+    void insert(pii t, int &id, int l, int r) {
+        if (id == 0) id = ++tot;
+        int mid = (l+r) >> 1;
+        if (cal(t, mid) > cal(seg[id].line, mid)) swap(t, seg[id].line);
+        if (l == r)  return;
+        if (cal(t, l) > cal(seg[id].line, l)) insert(t, seg[id].ls, l, mid);
+        if (cal(t, r) > cal(seg[id].line, r)) insert(t, seg[id].rs, mid+1, r);
+    }
+
+    int query(int p, int id, int l, int r) {
+        if (id == 0) return -INF;
+        if (l == r) return cal(seg[id].line, p);
+        int mid = (l+r)>>1;
+        if (p <= mid) return max(query(p, seg[id].ls, l, mid), cal(seg[id].line, p));
+        else return max(query(p, seg[id].rs, mid+1, r), cal(seg[id].line, p));
+    }
+} LCT;
+
+int b[mxN], c[mxN];
 
 inline void solve() {
-    ///int n; cin >> n;
+    cin >> n >> m;
+    int mx = 0;
+    for (int i = 0; i < n; i++) cin >> b[i];
+    for (int i = 0; i < m; i++) cin >> c[i], mx = max(mx, c[i]);
 
-    // if (n % 2 == 0) cout << 1 << ' ' << n / 2 << '\n';
-    // else cout << -1 << '\n';
+    int root = 0;
+    sort(b, b + n, greater<int>());
+    for (int i = 0; i < n; i++) {
+        LCT.insert({(i + 1), (i + 1) * b[i]}, root, 0, mx);
+    }
+
+    for (int i = 0; i < m; i++) cout << LCT.query(c[i], root, 0, mx) << ' ';
 }
 
 signed main() {
 	IO;	
-    // int T; cin >> T;
-	// while(T--) solve();
-    int a = 1, b = 2;
-    test(a, b);
+	solve();	
 }

@@ -47,21 +47,36 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
+
 const int mxN = 2e6 + 5;
 
-
-
 inline void solve() {
-    ///int n; cin >> n;
+    int n, q; cin >> n;
 
-    // if (n % 2 == 0) cout << 1 << ' ' << n / 2 << '\n';
-    // else cout << -1 << '\n';
+    map<int, int> mp, ans;
+    for (int i = 0; i < n; i++) {
+        int a; cin >> a;
+        map<int, int> tmp;
+
+        for (auto &p : mp) 
+            tmp[__gcd(p.first, a)] += p.second;
+
+        tmp[a]++;
+        
+        for (auto p : tmp) 
+            ans[p.first] += p.second; 
+
+        swap(mp, tmp); 
+    }
+    
+    cin >> q;
+    while (q--) {
+        int x; cin >> x;
+        cout << ans[x] << '\n';
+    }
 }
 
 signed main() {
 	IO;	
-    // int T; cin >> T;
-	// while(T--) solve();
-    int a = 1, b = 2;
-    test(a, b);
+	solve();	
 }

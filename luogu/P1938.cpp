@@ -47,21 +47,47 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
+
 const int mxN = 2e6 + 5;
 
+class Edge {
+public:
+    int u, v, w;
+};
 
+int lim, m, n, s, f;
+vector<Edge> edges;
 
 inline void solve() {
-    ///int n; cin >> n;
+    cin >> lim >> m >> n >> f >> s;
+    for (int i = 0; i < m; i++) {
+        int u, v; cin >> u >> v;
+        edges.eb((Edge){u, v, lim});
+    }    
+    for (int i = 0; i < f; i++) {
+        int u, v, cost; cin >> u >> v >> cost;
+        edges.eb((Edge){u, v, lim - cost});
+    }
 
-    // if (n % 2 == 0) cout << 1 << ' ' << n / 2 << '\n';
-    // else cout << -1 << '\n';
+    // Bellmen-ford
+    vector<int> dis(n + 1, -INF);
+    bool is_INF = 0;
+    dis[s] = 0;
+    for (int i = 0; i < n; i++) {
+        for (auto [u, v, w] : edges) {
+            dis[v] = max(dis[v], dis[u] + w);
+        }
+    }
+
+    for (auto [u, v, w] : edges) {
+        if (dis[v] < dis[u] + w) is_INF = 1;
+    }
+
+    if (is_INF) cout << -1 << '\n';
+    else cout << *max_element(ALL(dis)) + lim<< '\n';
 }
 
 signed main() {
 	IO;	
-    // int T; cin >> T;
-	// while(T--) solve();
-    int a = 1, b = 2;
-    test(a, b);
+	solve();	
 }

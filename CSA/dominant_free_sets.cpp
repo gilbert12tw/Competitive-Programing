@@ -47,21 +47,48 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
-const int mxN = 2e6 + 5;
 
+const int mxN = 2e5 + 5;
 
+int n;
+pii pt[mxN];
+
+int bit[mxN];
+
+void upd(int i, int val) {
+    for (; i > 0; i -= (i&-i)) {
+        bit[i] += val;
+        if (bit[i] >= mod) bit[i] -= mod;
+    }
+}
+
+int qry(int i) {
+    int res = 0;
+    for (; i <= 100000; i += (i&-i)) {
+        res += bit[i];
+        if (res >= mod) res -= mod;
+    }
+    return res;
+}
 
 inline void solve() {
-    ///int n; cin >> n;
-
-    // if (n % 2 == 0) cout << 1 << ' ' << n / 2 << '\n';
-    // else cout << -1 << '\n';
+    cin >> n;
+    for (int i = 0; i < n; i++) cin >> pt[i];
+    sort(pt, pt + n, [](pii a, pii b) {
+        if (a.X == b.X) return a.Y < b.Y;
+        return a.X < b.X;
+    });
+    
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+        int res = 1 + qry(pt[i].Y + 1); 
+        ans = (ans + res) % mod;
+        upd(pt[i].Y, res);
+    }
+    cout << ans << '\n';
 }
 
 signed main() {
 	IO;	
-    // int T; cin >> T;
-	// while(T--) solve();
-    int a = 1, b = 2;
-    test(a, b);
+	solve();	
 }

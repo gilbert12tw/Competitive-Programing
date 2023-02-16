@@ -47,21 +47,28 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
+
 const int mxN = 2e6 + 5;
 
-
+int dp(int n, int k) {
+    if (2 * k > n) {
+        if (n % 2) return 2 * dp(n / 2, k - (n + 1) / 2) + 1;
+        else return 2 * (dp(n / 2, k - n / 2) - 1) + 1;
+    } else {
+        return 2 * k;
+    }
+}
 
 inline void solve() {
-    ///int n; cin >> n;
-
-    // if (n % 2 == 0) cout << 1 << ' ' << n / 2 << '\n';
-    // else cout << -1 << '\n';
+    int q; cin >> q;
+    while (q--) {
+        int n, k;
+        cin >> n >> k;
+        cout << dp(n, k) << '\n';
+    }
 }
 
 signed main() {
 	IO;	
-    // int T; cin >> T;
-	// while(T--) solve();
-    int a = 1, b = 2;
-    test(a, b);
+	solve();	
 }

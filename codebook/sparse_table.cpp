@@ -1,4 +1,3 @@
-
 void build() {
 	for(int i = 0; (1<<i) <= n; i++) {
 		for(int j = 0; j + (1<<i) - 1 < n; j++) {
