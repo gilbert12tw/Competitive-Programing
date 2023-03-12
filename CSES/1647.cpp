@@ -1,8 +1,6 @@
 #include<bits/stdc++.h>
-#define loli
+//#define loli
 using namespace std;
-typedef long long ll;
-#define int ll
 #define pii pair<int, int>
 #define X first
 #define Y second
@@ -50,11 +48,61 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n, q, a[mxN], nxt_smaller[mxN];
+int pa[mxN], rk[mxN];
+int ans[mxN];
+vector<pii> qry[mxN];
+vector<int> edge[mxN];
+
+int get(int x) {
+    return (x == pa[x] ? x : (pa[x] = get(pa[x])));
+}
+
+inline void onion(int u, int v) {
+    u = get(u); v = get(v);
+    if (u == v) return;
+    if (rk[u] > rk[v]) {
+        a[u] = a[v];
+        pa[v] = u; 
+    } else {
+        if (rk[u] == rk[v]) rk[v]++;
+        pa[u] = v;
+    }
+}
+
+inline void solve() {
+    cin >> n >> q;
+    vector<int> stk;
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+        pa[i] = i;
+    }
+    for (int i = 0; i < q; i++) {
+        int l, r; cin >> l >> r;
+        qry[r].eb(l, i);
+    }
+
+    stk.eb(0);
+    for (int i = n; i >= 1; i--) {
+        while (SZ(stk) > 1 && a[stk.back()] >= a[i]) stk.pop_back();
+        nxt_smaller[i] = stk.back();
+        if (nxt_smaller[i]) edge[nxt_smaller[i]].eb(i);
+        stk.eb(i);
+    }
+
+    for (int i = 1; i <= n; i++) {
+        for (int j : edge[i]) {
+            onion(j, i);
+        }
+        for (auto [l, id] : qry[i]) {
+            ans[id] = a[get(l)];
+        }
+    }
+
+    for (int i = 0; i < q; i++) cout << ans[i] << '\n';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

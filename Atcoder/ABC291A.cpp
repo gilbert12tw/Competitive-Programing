@@ -50,11 +50,24 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+inline void init() {
+    // initialize global variable
+
+}
+
+inline void solve() {
+    string s;
+    cin >> s;
+    for (int i = 0; i < SZ(s); i++) {
+        if (isupper(s[i])) {
+            cout << i + 1 << '\n';
+            return;
+        }
+    }
+
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

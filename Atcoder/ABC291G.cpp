@@ -50,11 +50,30 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n;
+int a[mxN], b[mxN];
+
+void shift() {
+    int tmp = a[0];
+    for (int i = 0; i < n; i++) 
+        a[i] = a[(i + 1) % n];
+    a[n-1] = tmp;
+}
+
+inline void solve() {
+    cin >> n;
+    for (int i = 0; i < n; i++) cin >> a[i];
+    for (int i = 0; i < n; i++) cin >> b[i];
+    
+    for (int i = 0; i < n; i++) {
+        int ans = 0;
+        for (int j = 0; j < n; j++) ans += (a[j] | b[j]);
+        cout << ans << '\n';
+        shift();
+    }
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

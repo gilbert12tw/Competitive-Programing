@@ -50,11 +50,33 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+const int dx[] = {1, 0, -1, 0}, dy[] = {0, 1, 0, -1};
+
+inline void solve() {
+    int n;
+    string s;
+    cin >> n >> s;
+
+    int x = 0, y = 0;
+    set<pii> st;
+    st.insert(mkp(0, 0));
+    map<char, int> mp;
+    mp['L'] = 0;
+    mp['U'] = 1;
+    mp['R'] = 2;
+    mp['D'] = 3;
+    int ok = 0;
+    for (int i = 0; i < n; i++) {
+        x += dx[mp[s[i]]]; 
+        y += dy[mp[s[i]]];
+        if (st.find(mkp(x, y)) != st.end()) ok = 1; 
+        st.insert(mkp(x, y));
+    }
+    cout << (ok ? "Yes\n" : "No\n");
+
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

@@ -50,11 +50,48 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+vector<int> g[mxN];
+
+inline void solve() {
+    int n, m;
+    cin >> n >> m;
+    vector<int> ind(n + 1);
+    for (int i = 0; i < m; i++) {
+        int u, v; cin >> u >> v;
+        g[u].eb(v);
+        ind[v]++;
+    }
+
+    queue<int> q;
+    int ok = 1;
+    for (int i = 1; i <= n; i++) {
+        if (ind[i] == 0) q.push(i);
+    }
+
+    vector<int> ans(n + 1);
+    int idx = 0;
+    while (!q.empty()) {
+        if (SZ(q) > 1) {
+            ok = 0;
+            break;
+        }
+        int u = q.front(); q.pop();
+        ans[u] = ++idx;
+        for (int v : g[u]) {
+            ind[v]--;
+            if (ind[v] == 0) q.push(v);
+        }
+    }
+    if (ok) {
+        cout << "Yes\n";
+        for (int i = 1; i <= n; i++) cout << ans[i] << ' ';
+    } 
+    else {
+        cout << "No\n";
+    }
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

@@ -50,11 +50,34 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+// a / cos(i),  b / cos(30 - i)
+
+int a, b;
+
+long double f(long double x) {
+    return min(1.0 * a / cos(x), 1.0 * b / cos(1.0 / 6.0 - x));
+}
+
+long double bs() {
+    long double l = 0, r = 2.0 / 6.0;
+    int rntm = 200000;
+    while (rntm--) {
+        long double mid = (l + r) / 2.0, ml = (l + mid) / 2.0;
+        if (f(ml) , f(mid)) l = mid;
+        else r = mid;
+    }
+    return f(l);
+}
+
+inline void solve() {
+    cin >> a >> b;
+    if (a > b) swap(a, b);
+    //if (a * a * 3 <= b * b) cout << a << '\n';
+    //else cout << fixed << setprecision(15) << (sqr(a * a * 6) - sqr(a * a * 2)) << '\n';
+    cout << fixed << setprecision(15) << bs() << '\n';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

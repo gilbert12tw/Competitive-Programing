@@ -50,11 +50,33 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n, m;
+
+inline void solve() {
+    cin >> n;
+    vector<pii> v(n);
+    for (auto &i : v) cin >> i.F >> i.S;
+    sort(ALL(v), [](pii a, pii b) {
+        if (a.S == b.S) return a.F < b.F;
+        return a.S > b.S;
+    });
+    vector<int> presum;
+    int sum = 0;
+    presum.eb(sum);
+    for (auto [c, q] : v) {
+        sum += c;
+        presum.eb(sum);
+        test(sum);
+    }
+   
+    cin >> m;
+    while (m--) {
+        int x; cin >> x;
+        cout << upper_bound(ALL(presum), x) - presum.begin() - 1 << ' ';
+    }
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

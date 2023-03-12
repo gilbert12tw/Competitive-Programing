@@ -50,11 +50,28 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+inline void solve() {
+    int n, m, k;
+    cin >> n >> m >> k;
+    vector<int> a(n), x(m);
+    for (int &i : a) cin >> i; 
+    for (int &i : x) cin >> i; 
+
+    sort(ALL(a));
+    sort(ALL(x));
+
+    int ans = 0;
+    for (int i = 0, j = 0; i < n; i++) {
+        while (j + 1 < m && x[j] + k < a[i]) j++;
+        if (x[j] - k <= a[i] && a[i] <= x[j] + k) {
+            j++;
+            ans++;
+        }
+    }
+    cout << ans << '\n';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

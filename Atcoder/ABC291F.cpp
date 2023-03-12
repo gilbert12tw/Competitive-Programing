@@ -50,11 +50,61 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n, m;
+vector<int> g[mxN], gp[mxN];
+
+inline void solve() {
+    cin >> n >> m;
+    for (int i = 0; i < n; i++) {
+        string s;
+        cin >> s;
+        for (int j = 0; j < m; j++) {
+            if (s[j] == '1') {
+                g[i].eb(i + j + 1);
+                gp[i + j + 1].eb(i);
+            }
+        }
+    }
+
+    vector<int> dis(n, inf), rdis(n, inf);
+    queue<int> q;
+    q.push(0);
+    dis[0] = 0;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : g[u]) {
+            if (dis[v] > dis[u] + 1) {
+                dis[v] = dis[u] + 1;
+                q.push(v);
+            } 
+        }
+    }
+
+    q.push(n-1);
+    rdis[n-1] = 0;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : gp[u]) {
+            if (rdis[v] > rdis[u] + 1) {
+                rdis[v] = rdis[u] + 1;
+                q.push(v);
+            } 
+        }
+    }
+    
+    for (int i = 1; i < n - 1; i++) {
+        int ans = inf;
+        for (int l = max(0ll, i - m); l < i; l++) {
+            for (int v : g[l]) {
+                if (v > i) ans = min(ans, dis[l] + rdis[v] + 1);
+            }
+        }
+        if (ans == inf) ans = -1;
+        cout << ans << ' ';
+    }
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

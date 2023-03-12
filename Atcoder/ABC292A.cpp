@@ -50,11 +50,15 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+inline void solve() {
+    string s; 
+    cin >> s;
+    for (auto c : s) {
+        cout << (char)((c - 'a') + 'A');
+    }
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

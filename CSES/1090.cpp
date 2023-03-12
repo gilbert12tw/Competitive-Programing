@@ -50,11 +50,29 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+inline void solve() {
+    int n, m;
+    cin >> n >> m;
+    multiset<int> st;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        st.insert(a[i]);
+    }
+
+    int boats = 0;
+    for (int i = 0; i < n; i++) {
+        if (st.find(a[i]) == st.end()) continue;
+        boats++;
+        st.erase(st.find(a[i]));
+        auto itx = st.upper_bound(m - a[i]);
+        if (itx != st.begin()) 
+            st.erase(prev(itx));
+    }
+    cout << boats << '\n';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

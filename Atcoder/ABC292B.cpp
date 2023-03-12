@@ -50,11 +50,20 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+inline void solve() {
+    int n, q;
+    cin >> n >> q;
+    vector<int> r(n + 1), y(n + 1);
+    while (q--) {
+        int o, x;
+        cin >> o >> x;
+        if (o == 1) y[x]++;
+        if (o == 2) r[x]++;
+        if (o == 3) cout << ((r[x] || y[x] > 1) ? "Yes\n" : "No\n");
+    }
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

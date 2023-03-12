@@ -50,11 +50,51 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+vector<int> g[mxN];
+int pa[mxN], sz[mxN];
+bitset<mxN> del;
+void get_sz(int u, int p) {
+	sz[u] = 1;
+	for (int v : g[u]) {
+		if (v == p or del[v]) continue;
+		get_sz(v, u);
+		sz[u] += sz[v];	
+	}
+}
+
+int get_centroid(int u, int n, int p) {
+	for (int v : g[u]) {
+		if (v != p and !del[v] and sz[v] * 2 > n) 
+			return get_centroid(v, n, u);
+	}
+	return u;
+}
+
+int build(int u) {
+	get_sz(u, -1);	
+	int centroid = get_centroid(u, sz[u], -1);
+	del[centroid] = 1;
+	for (int v : g[centroid]) {
+		if (del[v]) continue;
+		pa[build(v)] = centroid;
+	}
+	return centroid;
+}
+
+
+inline void solve() {
+    int n; cin >> n;
+    for (int i = 1; i < n; i++) {
+        int u, v; cin >> u >> v;
+        g[u].eb(v);
+        g[v].eb(u);
+        pa[i] = -1;
+    }
+    build(1);
+    for (int i = 1; i <= n; i++) cout << pa[i] << ' ';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

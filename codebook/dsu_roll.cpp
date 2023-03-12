@@ -5,7 +5,10 @@ struct DSU {
 		for (int i = 0; i <= n; i++) pa[i] = i, sz[i] = 1; 
 	}
 
-	int get(int u) { return pa[u] == u ? u : get(pa[u]); }
+	int get(int u) { 
+        while (u != pa[u]) u = pa[u];
+        return u;
+    }
 
 	bool merge(int u, int v) {
 		u = get(u), v = get(v);
@@ -17,11 +20,11 @@ struct DSU {
 		return 1;
 	}
 
-	int record() { return sz(stk); }
+	int record() { return (int)(stk.size()); }
 
 	void roll_back(int keep_point) {
 		while (sz(stk) > keep_point) {
-			pa[stk.back().F] = stk.back();
+			pa[stk.back().F] = stk.back().F;
 			sz[stk.back().S] -= sz[stk.back().F];
 			stk.pop_back();
 		}

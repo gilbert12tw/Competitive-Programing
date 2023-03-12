@@ -66,9 +66,10 @@ int get(int x) {
 
 void pp(int s) {
 	if (!s) return;
-	deb(s, tr[s].val);	
-	pp(lc(s)); pp(rc(s));
+    pp(lc(s));
+    test(s, tr[s].val);
+	pp(rc(s));
 }
-void mprint(int s) { de(s); pp(s);}
+void mprint(int s) { cout << "root = " << s << endl; pp(s);}
 /* end of Treap */
 

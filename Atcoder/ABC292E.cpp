@@ -48,13 +48,36 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 2000 + 5;
+
+
+int n, m, mat[mxN][mxN], trans[mxN][mxN];
+vector<int> g[mxN];
+
+void dfs(int st, int u) {
+   if (trans[st][u]) return;
+   trans[st][u] = 1;
+   for (int v : g[u]) dfs(st, v);
+}
+
+inline void solve() {
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        mat[u][v] = 1;
+        g[u].eb(v);
+    }
+    for (int i = 1; i <= n; i++) dfs(i, i);
+    int ans = 0;
+    for (int i = 1; i <= n; i++) for (int j = 1; j <= n; j++) {
+        if (i == j) continue;
+        if (trans[i][j] && mat[i][j] == 0) ans++;
+    }
+    cout << ans << '\n';
+}
 
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

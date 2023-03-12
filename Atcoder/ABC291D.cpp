@@ -19,7 +19,7 @@ typedef long long ll;
 #define uni(x) x.resize(unique(ALL(x)) - x.begin())
 #define inf 1000000000
 #define INF 1000000000000000000
-#define mod 1000000007
+#define mod 998244353
 #define get_bit(x, y) ((x>>y)&1)
 #define mkp make_pair
 #define IO ios_base::sync_with_stdio(0); cin.tie(0);
@@ -50,11 +50,26 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n, dp[2][mxN];
+
+inline void solve() {
+    cin >> n;
+    vector<int> a(n), b(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i] >> b[i];
+    }
+    dp[0][0] = 1;
+    dp[1][0] = 1;
+    for (int i = 1; i < n; i++) {
+        if (a[i] != a[i-1]) dp[0][i] = (dp[0][i] + dp[0][i-1]) % mod;
+        if (a[i] != b[i-1]) dp[0][i] = (dp[0][i] + dp[1][i-1]) % mod;
+        if (b[i] != a[i-1]) dp[1][i] = (dp[1][i] + dp[0][i-1]) % mod;
+        if (b[i] != b[i-1]) dp[1][i] = (dp[1][i] + dp[1][i-1]) % mod;
+    }
+    cout << (dp[1][n-1] + dp[0][n-1]) % mod << '\n';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

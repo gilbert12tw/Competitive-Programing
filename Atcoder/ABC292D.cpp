@@ -50,11 +50,48 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+struct DSU {
+	vector<int> dsu, sz, edg;
+	DSU(int n) {
+		dsu.resize(n + 1);
+		sz.resize(n + 1, 1);
+		edg.resize(n + 1, 0);
+		for (int i = 0; i <= n; i++) dsu[i] = i;
+	}
+	int get(int x) {
+		return (dsu[x] == x ? x : dsu[x] = get(dsu[x]));
+	}
+	void oni(int a, int b) {
+		a = get(a), b = get(b);
+		if(a == b) { 
+            edg[a]++;
+            return; 
+        }
+		if(sz[a] > sz[b]) swap(a, b);
+		dsu[a] = b;
+		sz[b] += sz[a];
+        edg[b] += edg[a] + 1;
+	}
+};
+
+inline void solve() {
+    int n, m;
+    cin >> n >> m;
+    DSU dsu(n);
+    for (int i = 0; i < m; i++) {
+        int u, v; cin >> u >> v;
+        dsu.oni(u, v);
+    }
+    int gg = 1;
+    for (int i = 1; i <= n; i++) {
+        int u = dsu.get(i);
+        if (dsu.edg[u] != dsu.sz[u]) gg = 0;
+    }
+    if (gg) cout << "Yes";
+    else cout << "No";
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

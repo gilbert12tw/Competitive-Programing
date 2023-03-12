@@ -48,13 +48,62 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 2e5 + 5;
+
+struct BIT{
+	int b[mxN], n;
+    BIT(int sz) {
+        n = sz;
+    }
+    void build() {
+        for (int i = 1; i <= n; i++) {
+            b[i] += 1;
+            int j = i + (i&-i);
+            if (j <= n) b[j] += b[i];
+        }
+    }
+	int qry(int i) {
+		int res = 0;
+        test(i);
+		for (; i > 0; i -= (i&-i)) res += b[i];
+		return res;
+	}
+	void upd(int i, int v) {
+		for (; i <= n; i += (i&-i)) b[i] += v; 
+	}
+    int findk(int k) {
+        int id = 0, res = 0;
+        int mx = __lg(n) + 1;
+        for (int i = mx; i >= 0; i--) {
+            if ((id | (1<<i)) > n) continue;
+            if (res + b[id|(1<<i)] < k) { 
+                id = (id | (1<<i));
+                res += b[id];
+            }
+        }
+        return id + 1;
+    }
+};
+
+inline void solve() {
+    int n, k;
+    cin >> n >> k;
+
+    BIT bit(n);
+
+    bit.build();
+
+    int x = k % n;
+    for (int left = n; left >= 1; left--) {
+        int res = bit.findk(x);
+        cout << (res + 1) << ' ';
+        bit.upd(res, -1);
+        x += k;
+        if (x >= left) x %= left;
+    }
+}
 
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

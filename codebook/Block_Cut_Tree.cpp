@@ -25,6 +25,7 @@ void Tarjan(int u, int rt) {
                     tr[bcnt + n].eb(x);
                     tr[x].eb(bcnt + n);
                 } while (x != v);
+                // add a node bcnt + n
                 tr[bcnt + n].eb(u);
                 tr[u].eb(bcnt + n);
             }
@@ -33,3 +34,9 @@ void Tarjan(int u, int rt) {
 	}
 }
 
+void build_BCT() {
+    for (int i = 1; i <= n; i++) if (!dfn[i]) {
+        stk.clear();
+        Tarjan(i, i);
+    }
+}

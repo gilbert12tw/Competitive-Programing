@@ -50,11 +50,73 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+string s;
+int id = 0;
+int cal();
+
+// id
+// 2+3*1+2+1
+//   i 
+int getnum() {
+    int res = 0;
+    while (isdigit(s[id])) 
+        res = res * 10 + (s[id++] - '0');
+    return res;
+}
+
+//f(1+2,3*10,105)
+//  i
+
+int fcal() {
+    id += 2; // f(
+    int mn = INF, mx = -INF;
+    while (s[id] != ')') {
+        int tmp = cal();
+        mn = min(mn, tmp);
+        mx = max(mx, tmp);
+        if (s[id] == ',') id++;
+    }
+    id++; // )
+    return mx - mn;
+}
+
+
+int cal() {
+    vector<int> num, opt;
+    while (id < SZ(s) && s[id] != ',' && s[id] != ')') {
+        if (isdigit(s[id]) || s[id] == 'f') {
+
+            if (s[id] != 'f') num.eb(getnum());
+            else num.eb(fcal());
+
+            // 1+2
+            // num : 1 2
+            // opt : 0
+            if (!opt.empty() && opt.back() == 0) {
+                int u = num.back(); num.pop_back();
+                int v = num.back(); num.pop_back();
+                num.eb(u + v);
+                opt.pop_back();
+            }
+        } else if (s[id] == '*'){
+            opt.emplace_back(1); 
+            id++;
+        } else if (s[id] == '+'){
+            opt.emplace_back(0);
+            id++;
+        }
+    }
+    int res = 1;
+    for (int i : num) res *= i;
+    return res;
+}
+
+inline void solve() {
+    cin >> s;
+    cout << cal() << endl;
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }

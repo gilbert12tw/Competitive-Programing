@@ -1,21 +1,27 @@
 struct BIT{
-	int b[mxN];
-    vector<int> tmp;
+	int b[mxN], n;
+    BIT(int _n) {
+        n = _n;
+        for (int i = 0; i <= n; i++) b[i] = 0;
+    }
+    void build(int a[]) {
+        for (int i = 1; i <= n; i++) {
+            b[i] += a[i];
+            int j = i + (i&-i);
+            if (j <= n) b[j] += b[i];
+        }
+    }
 	int qry(int i) {
 		int res = 0;
 		for (; i > 0; i -= (i&-i)) res += b[i];
 		return res;
 	}
 	void upd(int i, int v) {
-		for (; i < mxN; i += (i&-i)) b[i] += v, tmp.eb(i); 
+		for (; i <= n; i += (i&-i)) b[i] += v; 
 	}
-    void clear() {
-        for (int i : tmp) b[i] = 0;
-        tmp.clear();
-    }
 	int findk(int k) {
 		int id = 0, res = 0;
-		int mx = __lg(mxN) + 1;
+		int mx = __lg(n) + 1;
 		for (int i = mx; i >= 0; i--) {
 			if ((id | (1<<i)) > n) continue;
 			if (res + b[id|(1<<i)] < k) { 

@@ -50,11 +50,19 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+inline void solve() {
+    int n; cin >> n;
+    vector<int> v(5 * n);
+    for (int &i : v) cin >> i;
+    sort(ALL(v));
+    double sum = 0;
+    for (int i = n; i < 4 * n; i++) {
+        sum += (1.0 * v[i]) / (1.0 * 3 * n);
+    }
+    cout << sum << '\n';
+}
+
 signed main() {
 	IO;	
-    string s;
-    getline(cin, s);
-    for (char c : s) {
-        int ascii = c;
-    }
+	solve();	
 }
