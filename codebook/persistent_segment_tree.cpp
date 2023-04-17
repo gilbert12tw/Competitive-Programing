@@ -1,5 +1,5 @@
 // persistent segment tree
-namespace sgt {
+struct persistent_segment {
 	const int mxN = 2e5 + 5;
 	int ls[mxN * 30], rs[mxN * 30], seg[mxN * 30], edit[mxN], tot, etot;
 	#define mid ((l+r)>>1)
@@ -42,4 +42,4 @@ namespace sgt {
 		if (b > mid) res += query(rs[ed], a, b, mid+1, r);
 		return res;
 	}
-}
+};

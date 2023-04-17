@@ -26,7 +26,7 @@ void tarjan(int u, int e = -1){
 	}
 }
 
-void build_tree() {
+void build_BCT() {
 	for (int u = 1; u <= n; u++) for (int v : g[u]) if (bcc[u] != bcc[eu[i] ^ ev[i] ^ u]) {
 		tr[bcc[u]].eb(bcc[eu[i] ^ ev[i] ^ u]);
 	}

@@ -22,6 +22,7 @@ void pushup(int x) {
 	tr[lc(x)].pa = tr[rc(x)].pa = x;
 }
 
+// split by size
 void split(int t, int k, int &a, int &b) {
 	if (!t) {
 		a = b = 0;

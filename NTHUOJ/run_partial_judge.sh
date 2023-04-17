@@ -1,3 +1,3 @@
 #!/bin/zsh
-cp $1 function.h
-gcc main.c && ./a.out
+cp $1.h function.h
+gcc $1.c && ./a.out
