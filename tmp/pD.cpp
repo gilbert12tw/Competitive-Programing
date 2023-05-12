@@ -48,28 +48,43 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 1e3 + 5;
+
+int n, k, mat[4][mxN][mxN];
 
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+    cin >> n >> k;
+    for (int i = 0; i < k; i++) {
+        int x, y; 
+        cin >> x >> y;
+        mat[0][x][y] = mat[1][x][y] = mat[2][x][y] = mat[3][x][y] = 1;
     }
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            mat[0][i][j] |= mat[0][i-1][j];
+            mat[1][i][j] |= mat[1][i][j-1];
+        }
     }
-    cout << boats << '\n';
+
+    for (int i = n; i >= 1; i--) {
+        for (int j = n; j >= 1; j--) {
+            mat[2][i][j] |= mat[2][i+1][j];
+            mat[3][i][j] |= mat[3][i][j+1];
+        }
+    }
+
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            int res = 0;
+            for (int k = 0; k < 4; k++) {
+                res |= mat[k][i][j];
+            }
+            if (!res) ans++;
+        }
+    }
+    cout << ans << '\n';
 }
 
 signed main() {

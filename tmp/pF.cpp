@@ -48,31 +48,34 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 500 + 5;
+
+int n, dp[mxN][mxN];
+int v[mxN], range[mxN];
+
+int DP(int l, int r) {
+    if (r < l) return 0;
+    if (~dp[l][r]) return dp[l][r];
+
+    int res = 0;
+    for (int k = l; k <= r; k++) {
+        if ((l == 1 || l <= k - range[k]) && (r == n || k + range[k] <= r))
+            res = max(res, DP(l, k - 1) + DP(k + 1, r) + v[k]);
+    }
+    return dp[l][r] = res;
+}
 
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+    cin >> n;
+    memset(dp, -1, sizeof dp);
+    for (int i = 1; i <= n; i++) { 
+        cin >> v[i] >> range[i];
     }
-
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
-    }
-    cout << boats << '\n';
+    cout << DP(1, n) << '\n';
 }
 
 signed main() {
 	IO;	
 	solve();	
 }
+

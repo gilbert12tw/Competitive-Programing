@@ -50,29 +50,79 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n, m, p, L[mxN], R[mxN];
+vector<int> g[mxN];
+int dis[mxN * 2];
+
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+    cin >> n >> m >> p;
+    for (int i = 0; i < m; i++) {
+        int u, v; cin >> u >> v;
+        g[u].eb(v); 
+        g[v].eb(u);
     }
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    for (int i = 0; i < p; i++) {
+        int c; cin >> c;
+        cin >> L[c] >> R[c];
     }
-    cout << boats << '\n';
+
+    // dijkstra
+    memset(dis, 0x3f, sizeof dis);
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
+    pq.push(0, 1);   
+    dis[1] = 0;
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (dis[u] < d) continue;
+        if (u > n) u -= n;
+
+        for (int v : g[u]) {
+            if (R[v] == 0 || L[v] > d + 1) { // first case
+                if (dis[v] > d + 1) {
+                    dis[v] = d + 1;
+                    pq.push(d + 1, v);
+                }
+            }
+
+            if (R[v] < d + 1) {
+                if (dis[v+n] > d + 1) {
+                    dis[v+n] = d + 1;
+                    pq.push(d + 1, v+n);
+                }
+            } else if (R[v] + 1 < L[u] || R[v] + 1 > R[u]) {
+                if (dis[v+n] > R[v] + 1) {
+                    dis[v+n] = R[v] + 1;
+                    pq.push(R[v] + 1, v+n);
+                }
+            }
+        }
+    }
+
+
+    int ans = min(dis[n], dis[n + n]);
+    if (ans == dis[0]) cout << "can't reach\n";
+    else cout << ans << '\n';
 }
 
 signed main() {
 	IO;	
 	solve();	
 }
+
+/*
+11 12 1
+1 2
+1 3
+1 5
+2 4 
+3 6 
+4 7 
+5 8 
+5 10 
+6 9 
+7 8 
+8 11 
+9 10 
+5 1 1
+*/

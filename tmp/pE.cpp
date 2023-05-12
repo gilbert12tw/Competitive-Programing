@@ -48,28 +48,62 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 2e5 + 5;
+
+int n, k, a[mxN];
+vector<int> ans;
+
+int check(int thres) {
+    ans.clear();
+    ans.eb(1);
+    int mn = a[1], mx = a[1];
+    for (int i = 1; i <= n; i++) {
+        mx = max(mx, a[i]);
+        mn = min(mn, a[i]);
+        if (mx - mn > thres) {
+            mx = mn = a[i];
+            ans.eb(i);
+        }
+    }
+    return SZ(ans) <= k;
+}
 
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
+    cin >> n >> k;
+    int l = 0, r = 0;
+    for (int i = 1; i <= n; i++) {
         cin >> a[i];
-        st.insert(a[i]);
+        r = max(r, a[i]);
     }
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    r += 10;
+    while (l < r) {
+        int mid = (l+r) >> 1;
+        if (check(mid)) r = mid;
+        else l = mid + 1;
     }
-    cout << boats << '\n';
+
+    check(l);
+    cout << l << '\n';
+    vector<int> v(n + 1);
+    int add = k - SZ(ans);
+    add = 0;
+    for (int i : ans) v[i] = 1;
+    for (int i = n; i >= 1; i--) {
+        if (add > 0 && v[i] == 0) {
+            add--;
+            v[i] = 1;
+        }
+    }
+    
+    int lst = -1;
+    for (int i = 1; i <= n; i++) {
+        if (v[i] && lst != -1) {
+            cout << lst << ' ' << i - 1 << '\n';
+        }
+        if (v[i]) lst = i;
+    }
+    cout << lst << ' ' << n << '\n';
 }
 
 signed main() {

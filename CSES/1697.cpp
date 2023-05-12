@@ -50,26 +50,51 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n;
+vector<int> games[mxN];
+
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
+    cin >> n;
     for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+        int a; cin >> a;
+        games[a].eb(i+1);
     }
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    int ok = 1;
+    vector<pii> ans;
+    for (int i = n; i >= 1; ) {
+        if (games[i].empty()) { 
+            i--;
+            continue;
+        }
+        int u = games[i].back(); games[i].pop_back();
+
+        int cnt = i;
+        vector<pii> tmp;
+        for (int j = i; j >= 1; j--) {
+            while (cnt && !games[j].empty()) {
+                int v = games[j].back(); games[j].pop_back();
+                cnt--;
+                ans.eb(u, v);
+                if (j > 1) tmp.eb(j - 1, v);
+            }
+        }
+
+        if (cnt) {
+            ok = 0;
+            break;
+        }
+        for (auto [x, id] : tmp) games[x].eb(id);
     }
-    cout << boats << '\n';
+
+    if (!ok) {
+        cout << "IMPOSSIBLE\n";
+        return;
+    }
+
+    cout << SZ(ans) << '\n';
+    for (auto [a, b] : ans) cout << a << ' ' << b << '\n';
+    
 }
 
 signed main() {

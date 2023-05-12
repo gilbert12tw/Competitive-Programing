@@ -48,28 +48,26 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 2e4 + 5;
+
+int n;
+int w[mxN], c[mxN], mp[mxN];
 
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+    cin >> n;
+    memset(mp, 0x3f, sizeof mp);
+    for (int i = 1; i <= n; i++) cin >> w[i];
+    for (int i = 1; i <= n; i++) { 
+        cin >> mp[w[i]];
     }
-
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    for (int i = 1; i <= 20000; i++) {
+        if (mp[i] == mp[0]) continue;
+        for (int j = 1; j + j < i; j++) {
+            int k = i - j;
+            mp[i] = min(mp[i], mp[j] + mp[k]);
+        }
     }
-    cout << boats << '\n';
+    for (int i = 1; i <= n; i++) cout << mp[w[i]] << ' ';
 }
 
 signed main() {

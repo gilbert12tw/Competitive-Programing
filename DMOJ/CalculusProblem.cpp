@@ -50,26 +50,56 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
+int n, q;
+
+int trie[10000000 + 5][2], tot;
+int mx[10000000 + 5];
+
+void insert(int x, int val) {
+    int cur = 0;
+    for (int i = 22; i >= 0; i--) {
+        int &go = trie[cur][get_bit(x, i)];
+        if (!go) go = ++tot;
+        mx[go] = max(mx[go], val);
+        cur = go;
+    }
+}
+
+int query(int m, int k) {
+    int cur = 0, res = 0;
+    for (int i = 22; i >= 0; i--) {
+        int mi = get_bit(m, i);
+        int ki = get_bit(k, i);
+        if (mi && ki) {
+            res = max(mx[trie[cur][1]], res);
+            cur = trie[cur][0];
+        } else if (!mi && ki) {
+            res = max(mx[trie[cur][0]], res);
+            cur = trie[cur][1];
+        } else if (mi && !ki) {
+            cur = trie[cur][1];
+        } else {
+            cur = trie[cur][0];
+        }
+        if (!cur) break; 
+    }
+    if (cur) res = max(res, mx[cur]);
+    return res;
+}
+
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
+    cin >> n >> q;
     for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+        int a; cin >> a;        
+        insert(i, a);
     }
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    while (q--) {
+        int m, k;
+        cin >> m >> k;
+        cout << query(m, k) << '\n';
     }
-    cout << boats << '\n';
+
 }
 
 signed main() {

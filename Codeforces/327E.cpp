@@ -1,4 +1,7 @@
 #include<bits/stdc++.h>
+#pragma GCC optimize("Ofast,unroll-loops")
+#pragma loop-opt(on)
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2,fma,tune=native")
 #define loli
 using namespace std;
 typedef long long ll;
@@ -48,28 +51,41 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 24;
 
+int n, k;
+int a[mxN+5], sum[(1<<mxN)+5], dp[(1<<mxN)+5];
+int lb[40];
+
+#define lowbit(x) (x&-x)
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+    cin >> n;
+    for (int i = 0; i < n; i++) lb[(1<<i)%37] = i;
+    for (int i = 0; i < n; i++) cin >> a[i];
+    for (int i = 1; i < (1<<n); i++) {
+        sum[i] = sum[i ^ lowbit(i)] + a[lb[lowbit(i)%37]];
     }
+    cin >> k;
+    vector<int> v(k);
+    for (int &i : v) cin >> i;
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    dp[0] = 1;
+    for (int i = 0; i < (1<<n); i++) {
+        int ok = 1;
+        for (int j : v) if (sum[i] == j) 
+            ok = 0;
+        if (!ok) {
+            dp[i] = 0;
+            continue;
+        }
+        for (int j = 0; j < n; j++) {
+            if (get_bit(i, j) == 0) {
+                dp[i|(1<<j)] = (dp[i|(1<<j)] + dp[i]);
+                if (dp[i|(1<<j)] >= mod) dp[i|(1<<j)] -= mod;
+            }
+        }
     }
-    cout << boats << '\n';
+    cout << dp[(1<<n)-1] << '\n';
 }
 
 signed main() {

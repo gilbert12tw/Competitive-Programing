@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include<iostream>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -23,6 +23,7 @@ typedef long long ll;
 #define get_bit(x, y) ((x>>y)&1)
 #define mkp make_pair
 #define IO ios_base::sync_with_stdio(0); cin.tie(0);
+/*
 void abc() {cout << endl;}
 template <typename T, typename ...U> void abc(T a, U ...b) {
     cout << a << ' ', abc(b...);
@@ -47,6 +48,7 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
+*/
 
 const int mxN = 2e6 + 5;
 

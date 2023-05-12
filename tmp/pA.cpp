@@ -50,26 +50,43 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
-inline void solve() {
-    int n, m;
-    cin >> n >> m;
+int n, k, m;
+vector<int> seg[mxN];
+
+int sol() {
     multiset<int> st;
-    vector<int> a(n);
+    int res = 0;
+    for (int i = 0; i < k; i++) st.insert(0);
+    for (int r = 1; r <= 1000000; r++) {
+        for (int l : seg[r]) {
+            auto it = st.lower_bound(l);
+            if (it == st.begin()) continue;
+            it = prev(it);
+            st.erase(it);
+            st.insert(r);
+            res++;
+        }
+    } 
+    return res;
+}
+
+inline void solve() {
+    cin >> n >> k >> m;
     for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
+        int u, v;
+        cin >> u >> v;
+        seg[v].eb(u);
     }
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    while (m--) {
+        int q, a, b;
+        cin >> q >> a >> b;
+        if (q == 2) {
+            cout << sol() << '\n';
+        } else {
+            seg[b].eb(a);
+        }
     }
-    cout << boats << '\n';
 }
 
 signed main() {

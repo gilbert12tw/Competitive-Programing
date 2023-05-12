@@ -51,25 +51,36 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 const int mxN = 2e6 + 5;
 
 inline void solve() {
-    int n, m;
-    cin >> n >> m;
-    multiset<int> st;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        st.insert(a[i]);
-    }
+    string s;
+    cin >> s;
+    map<char, int> mp;
+    mp['A'] = 0;
+    mp['T'] = 1;
+    mp['C'] = 2;
+    mp['G'] = 3;
 
-    int boats = 0;
-    for (int i = 0; i < n; i++) {
-        if (st.find(a[i]) == st.end()) continue;
-        boats++;
-        st.erase(st.find(a[i]));
-        auto itx = st.upper_bound(m - x);
-        if (itx != st.begin()) 
-            st.erase(prev(itx));
+    int a[4] = {0};
+    string ans;
+    for (int i = 0; i < SZ(s); i++) {
+        a[mp[s[i]]]++;
+        int mn = INF;
+        for (int j = 0; j < 4; j++) mn = min(a[j], mn);
+        if (mn >= 1) {
+            for (int j = 0; j < 4; j++) a[j] = 0;
+            ans.push_back(s[i]);
+        }
     }
-    cout << boats << '\n';
+    for (int j = 0; j < 4; j++) {
+        if (a[j] == 0) {
+            if (j == 0) ans.push_back('A');
+            if (j == 1) ans.push_back('T');
+            if (j == 2) ans.push_back('C');
+            if (j == 3) ans.push_back('G');
+            break;
+        }
+    }
+    cout << ans << '\n';
+
 }
 
 signed main() {

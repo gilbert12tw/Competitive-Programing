@@ -4,6 +4,8 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
+#include<map>
+#include<set>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -28,35 +30,48 @@ typedef long long ll;
 #define get_bit(x, y) ((x>>y)&1)
 #define mkp make_pair
 #define IO ios_base::sync_with_stdio(0); cin.tie(0);
-void abc() {cout << endl;}
-template <typename T, typename ...U> void abc(T a, U ...b) {
-    cout << a << ' ', abc(b...);
-}
-template <typename T> void printv(T l, T r) {
-    for (; l != r; ++l) cout << *l << " \n"[l + 1 == r];
-}
-template <typename A, typename B> istream& operator >> (istream& o, pair<A, B> &a) {
-    return o >> a.X >> a.Y;
-}
-template <typename A, typename B> ostream& operator << (ostream& o, pair<A, B> a) {
-    return o << '(' << a.X << ", " << a.Y << ')';
-}
-template <typename T> ostream& operator << (ostream& o, vector<T> a) {
-    bool is = false;
-    if (a.empty()) return o << "{}";
-    for (T i : a) {o << (is ? ' ' : '{'), is = true, o << i;}
-    return o << '}';
-}
-#ifdef loli
-#define test(args...) abc("[" + string(#args) + "]", args)
-#else
-#define test(args...) void(0)
-#endif
 
 const int mxN = 2e6 + 5;
 
 inline void solve() {
+    int n; cin >> n;
 
+    map<int, int> sumy;
+    map<int, vector<pii> > mpx;
+    for (int i = 0; i < n; i++) {
+        int r, c, x;
+        cin >> r >> c >> x;
+        mpx[r].eb(c, x);
+        sumy[c] += x;
+    }
+
+    multiset<int> st;
+
+    int ans = 0;
+
+    for (auto [id, s] : sumy) st.insert(s);
+    
+    for (auto [x, v] : mpx) {
+        int sumx = 0;
+        vector<pii> undo;
+        for (auto [y, val] : v) {
+            sumx += val;
+            auto it = st.find(sumy[y]); 
+            int newval = *it - val;
+            undo.eb(newval, *it);
+            st.erase(it);
+            st.insert(newval);
+        }
+
+        ans = max(ans, sumx + *st.rbegin());
+
+        for (auto [a, b] : undo) {
+            st.erase(st.find(a));
+            st.insert(b);
+        }
+    }
+
+    cout << ans << '\n';
 }
 
 signed main() {
