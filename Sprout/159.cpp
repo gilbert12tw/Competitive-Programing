@@ -56,13 +56,33 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+bitset<20001> dp;
 
 inline void solve() {
+    int n, m;
+    cin >> n >> m;
+    
 
+    dp[0] = 1;
+    for (int i = 0; i < n; i++) {
+        int c, k;
+        cin >> c >> k;
+        for (int j = 0; (1<<j) <= k; j++) {
+            dp = dp | (dp<<(c * (1<<j)));
+            k -= (1<<j);
+        }
+        if (k) dp = dp | (dp<<(c * k));
+    }
+
+    if (dp[m]) cout << "Yes\n";
+    else cout << "No\n";
+
+    dp.reset();
 }
 
 signed main() {
 	IO;	
-	solve();	
+    int T;
+	cin >> T;
+    while (T--) solve();	
 }

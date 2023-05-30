@@ -58,8 +58,62 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
-inline void solve() {
+struct Line {
+	int a, b;	
+	int operator () (int x) {
+		return a * x + b;
+	}
+    Line (int _a, int _b): a(_a), b(_b) {};
+    Line (): a(0), b(-INF) {};
+} seg[mxN];
+const int mxR = 5e5 + 5;
 
+#define ls (id<<1)
+#define rs (ls|1)
+void insert(Line t, int l = 0, int r = mxR, int id = 1) {
+	int mid = (l+r) >> 1;
+	if (t(mid) > seg[id](mid)) swap(t, seg[id]);
+	if (l == r)  return;
+	if (t(l) > seg[id](l)) insert(t, l, mid, ls);
+	if (t(r) > seg[id](r)) insert(t, mid+1, r, rs);
+}
+
+void modify(Line t, int a, int b, int l = 0, int r = mxR, int id = 1) {
+	if (a <= l and r <= b) { 
+		insert(t, l, r, id);	
+		return;
+	}
+	int mid = (l + r) >> 1;
+	if (a <= mid) modify(t, a, b, l, mid, ls);
+	if (b > mid) modify(t, a, b, mid+1, r, rs);
+}
+
+int query(int p, int l = 0, int r = mxR, int id = 1) {
+	if (l == r) return seg[id](p);
+	int mid = (l+r)>>1;
+	if (p <= mid) return max(query(p, l, mid, ls), seg[id](p));
+	else return max(query(p, mid+1, r, rs), seg[id](p));
+}
+
+
+inline void solve() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> c(n), pre(n), dp(n);
+    for (int &i : c) cin >> i;
+    reverse(ALL(c));
+
+    for (int i = 0; i < n; i++) {
+        if (!i) pre[i] = c[i];
+        else pre[i] = pre[i-1] + c[i];
+    }
+    
+    modify(Line(-2, -1), 0, k - 1);
+    for (int i = 0; i < n; i++) {
+        dp[i] = pre[i] - i * i + query(i);
+        modify(Line(2 * i, dp[i] - i * i), i + 1, i + k);
+    }
+    cout << dp[n-1] - pre[n-1] << '\n';
 }
 
 signed main() {

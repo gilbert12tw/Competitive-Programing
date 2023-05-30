@@ -7,6 +7,7 @@
 #include<map>
 #include<set>
 #include<bitset>
+#include<cstring>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -56,10 +57,34 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 5000 + 5;
+
+int n;
+int dp[mxN][mxN], opt[mxN][mxN];
+int sum[mxN];
 
 inline void solve() {
-
+    cin >> n;
+    memset(dp, 0x3f, sizeof dp);
+    for (int i = 1; i <= n; i++) {
+        cin >> dp[i][i];
+        opt[i][i] = i;
+        sum[i] = sum[i-1] + dp[i][i];
+    }
+    
+    for (int len = 2; len <= n; len++) {
+        for (int l = 1; l + len - 1 <= n; l++) {
+            int r = l + len - 1;
+            for (int k = opt[l][r-1]; k <= opt[l+1][r]; k++) {
+                if (dp[l][k] + dp[k+1][r] < dp[l][r]) {
+                    dp[l][r] = dp[l][k] + dp[k+1][r];
+                    opt[l][r] = k;
+                }
+            }
+            dp[l][r] += (sum[r] - sum[l-1]);
+        }
+    }
+    cout << dp[1][n] - sum[n] << '\n';
 }
 
 signed main() {

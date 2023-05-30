@@ -56,10 +56,62 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 3000 + 5;
+
+int n, k;
+int c[mxN];
+int dp[mxN][mxN]; // dp[k][i] = min cost when one school at i && total k schools
+int pre[mxN][mxN];
+
+int cost(int l, int r) {
+    int mid = (l + r) >> 1;
+    return pre[l][mid] + pre[r][mid+1];
+}
+
+void DP(int k, int l, int r, int optL, int optR) {
+    if (l > r) return;
+    int mid = (l + r) / 2;
+    int opt = -1;
+    dp[k][mid] = INF;
+    
+    for (int i = optL; i <= mid; i++) {
+        if (dp[k-1][i] + cost(i, mid) < dp[k][mid]) {
+            dp[k][mid] = dp[k-1][i] + cost(i, mid);
+            opt = i;
+        }
+    }
+
+    if (l == r) return;
+        
+    DP(k, l, mid - 1, optL, opt);
+    DP(k, mid+1, r, opt, optR);
+}
 
 inline void solve() {
+    cin >> n >> k;
+    for (int i = 1; i <= n; i++) {
+        cin >> c[i];
+    }
 
+    for (int l = 1; l <= n; l++) {
+        for (int i = l - 1; i >= 1; i--) {
+            pre[l][i] = pre[l][i+1] + (l - i) * c[i];
+        }
+        for (int i = l+1; i <= n; i++) {
+            pre[l][i] = pre[l][i-1] + (i - l) * c[i];
+        }
+        dp[1][l] = pre[l][1];
+    }
+
+    for (int j = 1; j <= k; j++) {
+        if (j != 1) DP(j, 1, n, 1, n);
+    }
+
+    int ans = INF;
+    for (int i = 1; i <= n; i++) {
+        ans = min(ans, dp[k][i] + pre[i][n]);
+    }
+    cout << ans << '\n';
 }
 
 signed main() {

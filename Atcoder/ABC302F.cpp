@@ -4,9 +4,6 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
-#include<map>
-#include<set>
-#include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -58,8 +55,43 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
-inline void solve() {
+struct Dijkstra {
+    vector<pii> g[mxN];
 
+    int dijkstra(int s, int t, int n) {
+        priority_queue<pii, vector<pii>, greater<pii>> pq;
+        vector<int> dis(n + 1);
+        fill(ALL(dis), INF);	
+        dis[s] = 0; pq.push(0, s);
+
+        while (!pq.empty()) {
+            auto [d, u] = pq.top(); pq.pop();
+            if (d > dis[u]) continue;
+            for (auto [v, w] : g[u]) {
+                if (dis[v] > d + w) {
+                    dis[v] = d + w;
+                    pq.push(dis[v], v);
+                } 
+            }
+        }
+        if (dis[t] == dis[0]) return -1;
+        return dis[t] - 1;
+    }
+} dijkstra;
+
+inline void solve() {
+    int n, m;
+    cin >> n >> m;
+    for (int i = 0; i < n; i++) {
+        int a, s;
+        cin >> a;
+        for (int j = 0; j < a; j++) {
+            cin >> s;
+            dijkstra.g[s].eb(m + i + 1, 1);
+            dijkstra.g[m + i + 1].eb(s, 0);
+        }
+    }
+    cout << dijkstra.dijkstra(1, m, n + m + 5);
 }
 
 signed main() {

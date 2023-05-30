@@ -6,7 +6,6 @@
 #include<queue>
 #include<map>
 #include<set>
-#include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -59,6 +58,39 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 const int mxN = 2e6 + 5;
 
 inline void solve() {
+    int h, w, n;
+    cin >> h >> w >> n;
+    set<pii> st;
+    map<pii, int> mp;
+    for (int i = 0; i < n; i++) {
+        int x, y; cin >> x >> y;
+        mp[mkp(x, y)] = 1;
+        
+        for (int j = -1; j <= 1; j++) {
+            for (int k = -1; k <= 1; k++) {
+                if (x + j <= 1 or x + j >= h or y + k <= 1 or y + k >= w) 
+                    continue;
+                st.insert(mkp(x + j, y + k));
+            }
+        }
+    }
+
+    int total = (h - 2) * (w - 2);
+
+    map<int, int> ans;
+    for (auto [x, y] : st) {
+        int cnt = 0;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (mp.find(mkp(x + i, y + j)) != mp.end())
+                    cnt++;
+            }
+        }
+        ans[cnt]++;
+    }
+    cout << total - SZ(st) << '\n';
+    for (int i = 1; i <= 9; i++) 
+        cout << ans[i] << '\n';
 
 }
 

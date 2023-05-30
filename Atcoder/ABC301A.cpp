@@ -4,9 +4,6 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
-#include<map>
-#include<set>
-#include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -59,7 +56,22 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 const int mxN = 2e6 + 5;
 
 inline void solve() {
-
+    int n; cin >> n;
+    string s; cin >> s;
+    int Tcnt = 0, Acnt = 0, lstT, lstA;
+    for (int i = 0; i < n; i++) {
+        if (s[i] == 'T') Tcnt++, lstT = i;
+        else Acnt++, lstA = i;
+    }
+    if (Tcnt > Acnt) {
+        cout << "T";
+    } else if (Acnt > Tcnt) {
+        cout << "A";
+    } else if (lstT < lstA) {
+        cout << "T";
+    } else {
+        cout << "A";
+    }
 }
 
 signed main() {

@@ -5,8 +5,8 @@
 #include<algorithm>
 #include<queue>
 #include<map>
-#include<set>
-#include<bitset>
+#include<numeric>
+#include<assert.h>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -56,10 +56,56 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+int n;
+map<vector<int>, int> dp;
+
+
+
+vector<int> count_div(int a) {
+
+    vector<int> res;
+    for (int i = 2; i * i <= a && a != 1; i++) {
+        int cnt = 0;
+        if (a % i) continue;
+        while (a % i == 0) {
+            a /= i;
+            cnt++;
+        }
+        if (cnt > 1) res.eb(cnt);
+    }
+    sort(ALL(res));
+    return res;
+}
+
+int sol(int a) {
+    vector<int> div = count_div(a);
+    if (dp.find(div) != dp.end()) 
+        return dp[div];
+
+    vector<int> mex;
+    for (int i = 2; i * i <= a; i++) {
+        if (a % i || gcd(i, a / i) == 1) continue;
+        mex.eb(sol(i) ^ sol(a / i));
+    }
+    sort(ALL(mex));
+    unique(ALL(mex));
+    for (int i = 0; i < SZ(mex); i++) {
+        if (i != mex[i]) return dp[div] = i;
+    }
+    return dp[div] = SZ(mex);
+}
+
 
 inline void solve() {
-
+    cin >> n;
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+        int a;
+        cin >> a;
+        ans ^= sol(a);
+    }
+    if (ans) cout << "ALICE\n";
+    else cout << "BOB\n";
 }
 
 signed main() {

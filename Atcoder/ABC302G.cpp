@@ -4,9 +4,7 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
-#include<map>
 #include<set>
-#include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -58,8 +56,49 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
-inline void solve() {
+vector<vector<int>> all_cy = {
+    {1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4},
+    {1, 2, 3}, {1, 3, 2}, {1, 2, 4}, {1, 4, 2}, {1, 3, 4}, {1, 4, 3}, {2, 3, 4}, {2, 4, 3},
+    {1, 2, 3, 4}, {1, 3, 2, 4}, {1, 3, 4, 2}, {1, 2, 4, 3}, {1, 4, 3, 2}, {1, 4, 2, 3}
+};
 
+inline void solve() {
+    int n; cin >> n;
+    vector<int> a(n), b;
+    for (int &i : a) cin >> i;
+    b = a;
+    sort(ALL(b));
+    
+
+    multiset<pii> edge;
+    for (int i = 0; i < n; i++) {
+        if (a[i] != b[i]) {
+            edge.insert(mkp(a[i], b[i]));
+        }
+    }
+
+    int edge_cnt = SZ(edge);
+    int cyc_cnt = 0;
+    while (!edge.empty()) {
+        for (auto cyc : all_cy) {
+            int ok = 1;
+            for (int i = 1; i <= SZ(cyc); i++) {
+                if (edge.find(mkp(cyc[i-1], cyc[i % SZ(cyc)])) == edge.end()) {
+                    ok = 0;
+                    break;
+                }
+            }
+            
+            if (ok) {
+                for (int i = 1; i <= SZ(cyc); i++) {
+                    edge.erase(edge.find(mkp(cyc[i-1], cyc[i % SZ(cyc)])));
+                }
+                break;
+            }
+        }
+        cyc_cnt++;
+    }
+    cout << edge_cnt - cyc_cnt;
 }
 
 signed main() {

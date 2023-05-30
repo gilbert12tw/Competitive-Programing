@@ -4,9 +4,6 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
-#include<map>
-#include<set>
-#include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -27,7 +24,7 @@ typedef long long ll;
 #define uni(x) x.resize(unique(ALL(x)) - x.begin())
 #define inf 1000000000
 #define INF 1000000000000000000
-#define mod 1000000007
+#define mod 998244353
 #define get_bit(x, y) ((x>>y)&1)
 #define mkp make_pair
 #define IO ios_base::sync_with_stdio(0); cin.tie(0);
@@ -56,10 +53,60 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 1e7 + 5;
+
+const int J[10] = {1, 1, 2, 6, 24, 120};
+int n, a1, x, y, m, k;
+
+inline int fp(int a, int b, int p) {
+    int res = 1;
+    while(b) {
+        if(b&1) res = (res * a) % p;
+        a = a * a % p;
+        b >>= 1;
+    }
+    return res;
+}
+ 
+inline int inv(int x) {return fp(x, mod - 2, mod);}
+
+int a[mxN], c[mxN], sumc[mxN];
+void build() {
+    a[1] = a1;
+    for (int i = 2; i <= n; i++) {
+        a[i] = (a[i-1] * x + y) % m; 
+        test(i, a[i]);
+    }
+    int di = inv(J[k]); 
+    for (int i = 1; i <= n; i++) {
+        if (i < k) continue;
+        c[i] = 1;
+        for (int j = 0; j < k; j++) {
+            c[i] = c[i] * (i - j) % mod; 
+        }
+        c[i] = c[i] * di % mod;
+        sumc[i] = (sumc[i-1] + c[i]) % mod;
+    }
+}
+
+int get_b(int n) {
+    int res = 0;
+    for (int i = 1; i <= n; i++) {
+        res = (res + a[i] * sumc[n-i+1] % mod) % mod;
+    }
+    return res;
+}
 
 inline void solve() {
-
+    cin >> n >> a1 >> x >> y >> m >> k;
+    build();
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        int b = get_b(i) - get_b(i-1);
+        test(i, b);
+        ans = ans ^ (b * i);
+    }
+    cout << ans << '\n';
 }
 
 signed main() {

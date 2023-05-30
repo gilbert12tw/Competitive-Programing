@@ -4,9 +4,6 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
-#include<map>
-#include<set>
-#include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -58,8 +55,46 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 
 const int mxN = 2e6 + 5;
 
-inline void solve() {
+int n, J[mxN], invJ[mxN];
+ 
+int fp(int a, int b, int p) {
+    int res = 1;
+    while(b) {
+        if(b&1) res = (res * a) % p;
+        a = a * a % p;
+        b >>= 1;
+    }
+    return res;
+}
+ 
+void build(int n) {
+    J[1] = J[0] = invJ[1] = invJ[0] = 1;
+    for(int i = 2; i <= n; i++) J[i] = J[i - 1] * i % mod;
+    invJ[n] = fp(J[n], mod - 2, mod);
+    for(int i = n - 1; i >= 2; i--) invJ[i] = invJ[i + 1] * (i + 1) % mod;
+}
+ 
+int C(int n, int m) {
+	if (n < m) return 0;
+    if(n == m or m == 0) return 1;
+    int res = J[n] * invJ[n - m] % mod * invJ[m] % mod;
+    return res;
+}
 
+inline void solve() {
+    int h, w, a, b; 
+    cin >> h >> w >> a >> b;
+    build(h + w + 1);
+    int ans = 0;
+    /*    B W
+    *  H 
+    *  A
+    *
+    */
+    for (int i = 1; i <= h - a; i++) {
+        ans = (ans + C(i + b - 2, i - 1) * C(w - b + h - i - 1, h - i) % mod) % mod; 
+    }
+    cout << ans << '\n';
 }
 
 signed main() {

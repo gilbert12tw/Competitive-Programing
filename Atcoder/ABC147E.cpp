@@ -4,13 +4,10 @@
 #include<utility>
 #include<algorithm>
 #include<queue>
-#include<map>
-#include<set>
 #include<bitset>
 #define loli
 using namespace std;
 typedef long long ll;
-#define int ll
 #define pii pair<int, int>
 #define X first
 #define Y second
@@ -56,13 +53,39 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+int n, m;
+int a[81][81], b[81][81];
+bitset<25610> dp[81][81];
 
 inline void solve() {
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) for (int j = 1; j <= m; j++) 
+        cin >> a[i][j];
+    for (int i = 1; i <= n; i++) for (int j = 1; j <= m; j++) 
+        cin >> b[i][j];
 
+    int bias = 80 * 160;
+    dp[1][1][bias + a[1][1] - b[1][1]] = 1;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (i == 1 && j == 1) continue;
+
+            int d = a[i][j] - b[i][j];
+            if (d < 0) d = -d;
+            dp[i][j] = (dp[i-1][j] << d) | (dp[i-1][j] >> d) | (dp[i][j-1] << d) | (dp[i][j-1] >> d);
+        }
+    }
+    int ans = bias * 2 + 1;
+    for (int i = 0; i <= bias * 2; i++) {
+        if (dp[n][m][i]) {
+            ans = min(ans, abs(i - bias));
+        }
+    }
+    cout << ans;
 }
 
 signed main() {
 	IO;	
 	solve();	
 }
+
