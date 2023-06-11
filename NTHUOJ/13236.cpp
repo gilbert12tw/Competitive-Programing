@@ -72,6 +72,7 @@ signed main() {
         int ok = 0;
         while (!q.empty()) {
             auto [now, step] = q.front(); q.pop();
+            if (step > 14) break;
             if (now == goal) {
                 cout << "You can solve it within " << step << " steps.\n";
                 ok = 1;
@@ -87,7 +88,7 @@ signed main() {
                     q.push(mkp(nxt, step+1));
                 }
             }
-            if (pos - 1 >= 0) {
+            if (pos % 3 != 0) {
                 nxt = now;
                 swap(nxt[pos], nxt[pos-1]);
                 if (!vis.count(nxt)) {
@@ -95,7 +96,7 @@ signed main() {
                     q.push(mkp(nxt, step+1));
                 }
             }
-            if (pos + 1 < 9) {
+            if (pos % 3 != 2) {
                 nxt = now;
                 swap(nxt[pos], nxt[pos+1]);
                 if (!vis.count(nxt)) {
