@@ -1,58 +1,56 @@
-#include<bits/stdc++.h>
+#include "13504.cpp"
 using namespace std;
 
-int n, m;
-char color;
-list<char> beads;
-
-/*
-void eliminate() {
-    auto lit = it, rit = it;
-    char c = *it;
-    while (lit != beads.begin() && *prev(lit) == c) lit--;
-    while (next(rit) != beads.end() && *next(rit) == c) rit++;
+void DEPQ_BST::push(int x) { 
+    bst.insert(x);
 }
-*/
 
-int main() {
-    cin >> n >> m >> color;
-    for (int i = 0; i < n; i++) {
-        char c;
-        cin >> c;
-        beads.push_back(c);
-    }
-    
-    auto it = beads.insert(next(beads.begin(), m), 1, color);
-
-    while (1) {
-        int cnt = 1;
-        auto lit = it;
-        auto rit = it;
-        char c = *it;
-        while (lit != beads.begin() && *prev(lit) == c) {
-            lit--;
-            cnt++;
-        }
-        while (next(rit) != beads.end() && *next(rit) == c) { 
-            rit++;
-            cnt++;
-        }
-        if (cnt < 3) break;
-
-        
-        if (c == 'R') {
-            // do nothing
-        } else if (c == 'G') {
-            //beads.insert(beads.begin(), cnt * 2, 'G');
-        } else {
-            //beads.insert(prev(beads.end()), cnt, 'B');
-            //beads.reverse();
-        }
-
-        it = beads.erase(lit, next(rit));
-        for (char c : beads) cout << c;
-        cout << '\n';
-    }
-
-    for (char c : beads) cout << c;
+int DEPQ_BST::top() const { 
+    return *bst.begin();
 }
+
+int DEPQ_BST::bottom() const { 
+    return *bst.rbegin();
+}
+
+void DEPQ_BST::pop_top() { 
+    bst.erase(bst.begin());
+}
+
+void DEPQ_BST::pop_bottom() { 
+    bst.erase(prev(bst.end()));
+}
+
+int DEPQ_BST::size() const { 
+    return bst.size();
+}
+
+bool DEPQ_BST::empty() const { 
+    return bst.empty();
+}
+
+
+void DEPQ_MMH::push(int x) { 
+    mmh.push(x);
+}
+
+int DEPQ_MMH::top() const { 
+    return mmh.get_min();
+}
+
+int DEPQ_MMH::bottom() const { 
+    return mmh.get_max();
+}
+
+void DEPQ_MMH::pop_top() { 
+    mmh.pop_min();
+}
+
+void DEPQ_MMH::pop_bottom() { 
+    mmh.pop_max();
+}
+
+int DEPQ_MMH::size() const { return mmh.size(); }
+bool DEPQ_MMH::empty() const { return mmh.empty(); }
+
+
