@@ -1,12 +1,4 @@
-#include<iostream>
-#include<vector>
-#include<string>
-#include<utility>
-#include<algorithm>
-#include<queue>
-#include<map>
-#include<set>
-#include<bitset>
+#include<bits/stdc++.h>
 #define loli
 using namespace std;
 typedef long long ll;
@@ -16,6 +8,7 @@ typedef long long ll;
 #define Y second
 #define F first
 #define S second
+#define vi vector<int>
 #define SZ(a) ((int)a.size())
 #define ALL(v) v.begin(), v.end()
 #define pb push_back
@@ -55,8 +48,6 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #else
 #define test(args...) void(0)
 #endif
-
-const int mxN = 2e6 + 5;
 
 inline void solve() {
 

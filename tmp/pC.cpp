@@ -2,7 +2,6 @@
 #define loli
 using namespace std;
 typedef long long ll;
-#define int ll
 #define pii pair<int, int>
 #define X first
 #define Y second
@@ -48,81 +47,53 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
-
-int n, m, p, L[mxN], R[mxN];
-vector<int> g[mxN];
-int dis[mxN * 2];
+const int p = 17;
+int len[1000001];
+vector<vector<int>> hsh;
 
 inline void solve() {
-    cin >> n >> m >> p;
-    for (int i = 0; i < m; i++) {
-        int u, v; cin >> u >> v;
-        g[u].eb(v); 
-        g[v].eb(u);
+    int n, q;
+    cin >> n >> q;
+    for (int i = 0; i < n; i++) { 
+        cin >> len[i];
+        string s; cin >> s;
+        vector<int> sum;
+        sum.eb(0);
+        int pp = 1;
+        for (int j = 1; j <= len[i]; j++) {
+            int res = (sum.back() + (pp * s[j-1]) % mod) % mod;
+            sum.eb(res);
+            pp = pp * p % mod;
+        }
+        hsh.eb(sum);
     }
 
-    for (int i = 0; i < p; i++) {
-        int c; cin >> c;
-        cin >> L[c] >> R[c];
-    }
+    while (q--) {
+        vector<int> abc(4);
+        int l = 0, r = inf;
+        for (int &i : abc) { 
+            cin >> i; i--;
+            r = min(r, len[i]);
+        }
 
-    // dijkstra
-    memset(dis, 0x3f, sizeof dis);
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-    pq.push(0, 1);   
-    dis[1] = 0;
-    while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
-        if (dis[u] < d) continue;
-        if (u > n) u -= n;
-
-        for (int v : g[u]) {
-            if (R[v] == 0 || L[v] > d + 1) { // first case
-                if (dis[v] > d + 1) {
-                    dis[v] = d + 1;
-                    pq.push(d + 1, v);
-                }
+        while (l < r) {
+            int mid = (l + r + 1) >> 1;
+            set<int> st;
+            for (int i : abc) {
+                st.insert(hsh[i][mid]);
             }
-
-            if (R[v] < d + 1) {
-                if (dis[v+n] > d + 1) {
-                    dis[v+n] = d + 1;
-                    pq.push(d + 1, v+n);
-                }
-            } else if (R[v] + 1 < L[u] || R[v] + 1 > R[u]) {
-                if (dis[v+n] > R[v] + 1) {
-                    dis[v+n] = R[v] + 1;
-                    pq.push(R[v] + 1, v+n);
-                }
+            if (SZ(st) > 1) {
+                r = mid - 1;
+            } else {
+                l = mid;
             }
         }
+        
+        cout << l << '\n';
     }
-
-
-    int ans = min(dis[n], dis[n + n]);
-    if (ans == dis[0]) cout << "can't reach\n";
-    else cout << ans << '\n';
 }
 
 signed main() {
 	IO;	
 	solve();	
 }
-
-/*
-11 12 1
-1 2
-1 3
-1 5
-2 4 
-3 6 
-4 7 
-5 8 
-5 10 
-6 9 
-7 8 
-8 11 
-9 10 
-5 1 1
-*/

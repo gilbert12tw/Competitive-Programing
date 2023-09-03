@@ -1,6 +1,6 @@
 // Treap !!!
 mt19937 ran(time(NULL));
-uniform_int_distribution<int> dis(0, 10000);
+uniform_int_distribution<int> dis(0, 5000000);
 
 #define lc(x) tr[x].ls
 #define rc(x) tr[x].rs
@@ -73,4 +73,3 @@ void pp(int s) {
 }
 void mprint(int s) { cout << "root = " << s << endl; pp(s);}
 /* end of Treap */
-

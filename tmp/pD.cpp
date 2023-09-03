@@ -48,43 +48,24 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 1e3 + 5;
-
-int n, k, mat[4][mxN][mxN];
-
 inline void solve() {
-    cin >> n >> k;
-    for (int i = 0; i < k; i++) {
-        int x, y; 
-        cin >> x >> y;
-        mat[0][x][y] = mat[1][x][y] = mat[2][x][y] = mat[3][x][y] = 1;
-    }
-
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            mat[0][i][j] |= mat[0][i-1][j];
-            mat[1][i][j] |= mat[1][i][j-1];
+    int q; cin >> q;
+    set<int> st;
+    st.insert(0);
+    map<int, int> mp;
+    while (q--) {
+        char c; cin >> c;
+        int k; cin >> k;
+        if (c == '+') {
+           st.insert(k); 
+        } else {
+            int x = mp[k]; 
+            while (st.count(x)) 
+                x += k; 
+            mp[k] = x;
+            cout << x << '\n';
         }
     }
-
-    for (int i = n; i >= 1; i--) {
-        for (int j = n; j >= 1; j--) {
-            mat[2][i][j] |= mat[2][i+1][j];
-            mat[3][i][j] |= mat[3][i][j+1];
-        }
-    }
-
-    int ans = 0;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            int res = 0;
-            for (int k = 0; k < 4; k++) {
-                res |= mat[k][i][j];
-            }
-            if (!res) ans++;
-        }
-    }
-    cout << ans << '\n';
 }
 
 signed main() {

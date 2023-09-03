@@ -1,5 +1,4 @@
-class LC_tree {
-private:
+struct LC_tree {
     struct Line {
         pii line;
         int ls = 0, rs = 0;
@@ -8,7 +7,7 @@ private:
         return l.first * x + l.second;
     }
     int tot = 0;
-public:
+
     void insert(pii t, int &id, int l, int r) {
         if (id == 0) id = ++tot;
         int mid = (l+r) >> 1;

@@ -48,62 +48,42 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e5 + 5;
-
-int n, k, a[mxN];
-vector<int> ans;
-
-int check(int thres) {
-    ans.clear();
-    ans.eb(1);
-    int mn = a[1], mx = a[1];
-    for (int i = 1; i <= n; i++) {
-        mx = max(mx, a[i]);
-        mn = min(mn, a[i]);
-        if (mx - mn > thres) {
-            mx = mn = a[i];
-            ans.eb(i);
-        }
-    }
-    return SZ(ans) <= k;
-}
+const int mxN = 3e5 + 5;
+int n, q, a[mxN];
+pii jump[mxN][22];
 
 inline void solve() {
-    cin >> n >> k;
-    int l = 0, r = 0;
+    cin >> n >> q;
     for (int i = 1; i <= n; i++) {
         cin >> a[i];
-        r = max(r, a[i]);
     }
-
-    r += 10;
-    while (l < r) {
-        int mid = (l+r) >> 1;
-        if (check(mid)) r = mid;
-        else l = mid + 1;
-    }
-
-    check(l);
-    cout << l << '\n';
-    vector<int> v(n + 1);
-    int add = k - SZ(ans);
-    add = 0;
-    for (int i : ans) v[i] = 1;
+    vector<int> stk;
+    stk.eb(n + 1);
     for (int i = n; i >= 1; i--) {
-        if (add > 0 && v[i] == 0) {
-            add--;
-            v[i] = 1;
+        while (a[stk.back()] > a[i]) stk.pop_back();
+        jump[i][0] = mkp(stk.back(), (stk.back() - i) * a[i]);
+        stk.eb(i);
+        for (int j = 1; j <= 20; j++) {
+            if (jump[i][j-1].F == n + 1) break;
+            jump[i][j] = mkp(jump[jump[i][j-1].F][j-1].F, jump[i][j-1].S + jump[jump[i][j-1].F][j-1].S);
         }
-    }
     
-    int lst = -1;
-    for (int i = 1; i <= n; i++) {
-        if (v[i] && lst != -1) {
-            cout << lst << ' ' << i - 1 << '\n';
-        }
-        if (v[i]) lst = i;
     }
-    cout << lst << ' ' << n << '\n';
+
+    while (q--) {
+        int l, r; cin >> l >> r;
+        int sum = 0;
+        for (int i = 20; i >= 0; i--) {
+            if (l <= jump[l][i].F && jump[l][i].F <= r) {
+                sum += jump[l][i].S;
+                l = jump[l][i].F;
+            }
+        }
+        if (l <= r) {
+            sum += (r - l + 1) * a[l];
+        }
+        cout << sum << '\n';
+    }
 }
 
 signed main() {

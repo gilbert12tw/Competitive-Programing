@@ -2,6 +2,7 @@ inline int dis(pii a, pii b) {
 	int xx = a.x - b.x, yy = a.y - b.y;
 	return xx * xx + yy * yy;
 }
+
 inline int p2(int x) {
 	return x * x;
 }
@@ -14,6 +15,7 @@ struct KDTree {
 		Node(pii _p, int ls, int rs): p(_p), ch{ls, rs} {}
 		Node(): ch{0, 0}, p(0, 0){}
 	} tr[mxN];
+	KDTree(): root(0), tot(0) {}
 
 	void insert(int &q, pii u, int isX) {
 		if (!q) {
@@ -25,6 +27,7 @@ struct KDTree {
 		insert(tr[q].ch[isRight], u, isX ^ 1);
 	}
 
+  // query the closest pt to goal
 	int qry(int u, pii goal, int isX) {
 		bool isRight = (isX ? goal.x > tr[u].p.x : goal.y > tr[u].p.y);
 		int ans = dis(goal, tr[u].p);
@@ -37,5 +40,4 @@ struct KDTree {
 		}
 		return ans;
 	}
-	KDTree(): root(0), tot(0) {}
 } kdtree;

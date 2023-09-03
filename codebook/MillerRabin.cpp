@@ -1,17 +1,32 @@
-const int test_time = 8;
-bool millerRabin(ll n) {
-  if (n < 3 || n % 2 == 0) return n == 2LL;
-  ll a = n - 1, b = 0;
-  while (a % 2 == 0) a /= 2, ++b;
-  // test_time 最好在 8 以上
-  for (int i = 1, j; i <= test_time; ++i) {
-    ll x = rand() % (n - 2) + 2, v = fp(x, a, n);
-    if (v == 1) continue;
-    for (j = 0; j < b; ++j) {
-      if (v == n - 1) break;
-      v = v * v % n;
-    }
-    if (j >= b) return 0;
+#define llu unsigned long long
+inline llu add(llu a, llu b, llu c) { return (__int128{a} + b) % c; }
+inline llu mul(llu a, llu b, llu c) { return __int128{a} * b % c; }
+inline llu mpow(llu a, llu b, llu c) {
+  llu res = 1;
+  while (b) {
+    if (b & 1) res = mul(res, a, c);
+    a = mul(a, a, c) ; b>>=1;
   }
-  return 1;
+  return res;
 }
+inline bool isprime(llu x) {
+  static auto witn = [](llu a, llu n, int t) {
+    if (!a) return false;
+    while (t--) {
+      llu a2 = mul(a, a, n);
+      if (a2 == 1 && a != 1 && a != n - 1) return true;
+      a = a2;
+    }
+    return a != 1;
+  };
+  if (x < 2) return false;
+  if (!(x & 1)) return x == 2;
+  int t = __builtin_ctzll(x - 1);
+  llu odd = (x - 1) >> t;
+  for (llu m:
+    {2, 325, 9375, 28178, 450775, 9780504, 1795265022})
+    if (witn(mpow(m % x, odd, x), x, t))
+      return false;
+  return true;
+}
+

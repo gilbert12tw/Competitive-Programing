@@ -48,34 +48,39 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 500 + 5;
-
-int n, dp[mxN][mxN];
-int v[mxN], range[mxN];
-
-int DP(int l, int r) {
-    if (r < l) return 0;
-    if (~dp[l][r]) return dp[l][r];
-
-    int res = 0;
-    for (int k = l; k <= r; k++) {
-        if ((l == 1 || l <= k - range[k]) && (r == n || k + range[k] <= r))
-            res = max(res, DP(l, k - 1) + DP(k + 1, r) + v[k]);
-    }
-    return dp[l][r] = res;
-}
+int n, m;
+vector<pii> bad[20];
 
 inline void solve() {
-    cin >> n;
-    memset(dp, -1, sizeof dp);
-    for (int i = 1; i <= n; i++) { 
-        cin >> v[i] >> range[i];
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        string s; cin >> s;
+        bad[s[1]-'a'].eb(mkp(s[0]-'a',  s[2]-'a'));
     }
-    cout << DP(1, n) << '\n';
+
+    vector<int> dp((1<<n)+1, 0);
+    dp[0] = 1;
+    for (int i = 0; i < (1<<n); i++) {
+        if (dp[i] == 0) continue;
+        for (int j = 0; j < n; j++) {
+            if (get_bit(i, j)) continue;
+            int check = 1;
+            for (auto [x, y] : bad[j]) {
+                if (get_bit(i, x) && !get_bit(i, y)) {
+                    check = 0;
+                    break;
+                }
+            }
+            if (check) 
+                dp[i | (1<<j)] += dp[i];
+        }
+    }
+    int res = 1;
+    for (int i = 2; i <= n; i++) res *= i;
+    cout << res - dp[(1<<n)-1];
 }
 
 signed main() {
 	IO;	
 	solve();	
 }
-

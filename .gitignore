@@ -36,6 +36,7 @@
 
 # Contest
 Contest/*
+tmp/*
 
 # other repo
-codebook/MakeCodeBook/*
+# codebook/MakeCodeBook/*

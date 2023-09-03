@@ -1,5 +1,5 @@
-pii exgcd(int a, int b) {
-	if(b == 0) return {1 ,0};
-	pii ans = exgcd(b, a % b);
-	return {ans.S, ans.F - a / b * ans.S};
+// ax+ny = 1, ax+ny == ax == 1 (mod n)
+void exgcd(lld x,lld y,lld &g,lld &a,lld &b) {
+  if (y == 0) g=x,a=1,b=0;
+  else exgcd(y,x%y,g,b,a),b-=(x/y)*a;
 }

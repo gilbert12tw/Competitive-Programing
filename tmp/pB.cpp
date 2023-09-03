@@ -1,76 +1,71 @@
-#include<bits/stdc++.h>
-#define loli
+#include <iostream>
+#include <vector>
+#include <queue>
 using namespace std;
-typedef long long ll;
-#define int ll
-#define pii pair<int, int>
-#define X first
-#define Y second
-#define F first
-#define S second
-#define SZ(a) ((int)a.size())
-#define ALL(v) v.begin(), v.end()
-#define pb push_back
-#define eb emplace_back
-#define push emplace
-#define lb(x, v) lower_bound(ALL(x), v)
-#define ub(x, v) upper_bound(ALL(x), v)
-#define re(x) reverse(ALL(x))
-#define uni(x) x.resize(unique(ALL(x)) - x.begin())
-#define inf 1000000000
-#define INF 1000000000000000000
-#define mod 1000000007
-#define get_bit(x, y) ((x>>y)&1)
-#define mkp make_pair
-#define IO ios_base::sync_with_stdio(0); cin.tie(0);
-void abc() {cout << endl;}
-template <typename T, typename ...U> void abc(T a, U ...b) {
-    cout << a << ' ', abc(b...);
-}
-template <typename T> void printv(T l, T r) {
-    for (; l != r; ++l) cout << *l << " \n"[l + 1 == r];
-}
-template <typename A, typename B> istream& operator >> (istream& o, pair<A, B> &a) {
-    return o >> a.X >> a.Y;
-}
-template <typename A, typename B> ostream& operator << (ostream& o, pair<A, B> a) {
-    return o << '(' << a.X << ", " << a.Y << ')';
-}
-template <typename T> ostream& operator << (ostream& o, vector<T> a) {
-    bool is = false;
-    if (a.empty()) return o << "{}";
-    for (T i : a) {o << (is ? ' ' : '{'), is = true, o << i;}
-    return o << '}';
-}
-#ifdef loli
-#define test(args...) abc("[" + string(#args) + "]", args)
-#else
-#define test(args...) void(0)
-#endif
 
-const int mxN = 2e4 + 5;
+const int INF = 1e9;
 
-int n;
-int w[mxN], c[mxN], mp[mxN];
+// Representation of an edge
+struct Edge {
+    int to;
+    int weight;
+};
 
-inline void solve() {
-    cin >> n;
-    memset(mp, 0x3f, sizeof mp);
-    for (int i = 1; i <= n; i++) cin >> w[i];
-    for (int i = 1; i <= n; i++) { 
-        cin >> mp[w[i]];
-    }
-    for (int i = 1; i <= 20000; i++) {
-        if (mp[i] == mp[0]) continue;
-        for (int j = 1; j + j < i; j++) {
-            int k = i - j;
-            mp[i] = min(mp[i], mp[j] + mp[k]);
+// Dijkstra's algorithm to find the shortest path from source to all other cities
+vector<int> dijkstra(int source, int num_cities, const vector<vector<Edge>>& graph) {
+    vector<int> dist(num_cities, INF);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, source});
+    dist[source] = 0;
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        int d = pq.top().first;
+        pq.pop();
+
+        if (d > dist[u]) {
+            continue;
+        }
+
+        for (const Edge& e : graph[u]) {
+            int v = e.to;
+            int w = e.weight;
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
         }
     }
-    for (int i = 1; i <= n; i++) cout << mp[w[i]] << ' ';
+
+    return dist;
 }
 
-signed main() {
-	IO;	
-	solve();	
+int main() {
+    int N1, N2, M;
+    cin >> N1 >> N2 >> M;
+
+    int total_cities = N1 + N2;
+
+    // Create an adjacency list to represent the graph
+    vector<vector<Edge>> graph(total_cities);
+    for (int i = 0; i < M; ++i) {
+        int u, v;
+        cin >> u >> v;
+        graph[u].push_back({v, 1}); // Assuming ships take 1 unit of time
+        graph[v].push_back({u, 1}); // Assuming ships take 1 unit of time
+    }
+
+    // Find the shortest distances from city 1 to all other cities
+    vector<int> distances = dijkstra(1, total_cities, graph);
+
+    // Find the maximum distance to any city on Hua Island (N1 + 1 to N1 + N2)
+    int max_distance = 0;
+    for (int i = N1 + 1; i <= N1 + N2; ++i) {
+        max_distance = max(max_distance, distances[i]);
+    }
+
+    cout << max_distance << endl;
+
+    return 0;
 }
+

@@ -1,16 +1,24 @@
-inline ll f(ll x, ll c, ll n) {
-	return (x * x + c) % n;	
-}
-
-ll Pollard_Rho(ll n) {
-  ll c = rand() % (n - 1) + 1;
-  ll t = f(0, c, n); // turtle 
-  ll r = f(f(0, c, n), c, n); // rabit
-  while (t != r) {
-    ll d = gcd(abs(t - r), n);
-    if (d > 1) return d;
-    t = f(t, c, n);
-    r = f(f(r, c, n), c, n);
+// does not work when n is prime
+// return any non-trivial factor
+inline llu f(llu x, llu m) { return (mul(x, x, m) + 1) % m; }
+inline llu pollard_rho(llu n) {// don't input 1
+  if (!(n & 1)) return 2;
+  while (true) {
+    llu y = 2, x = rand() % (n - 1) + 1, res = 1;
+    for (int sz = 2; res == 1; sz *= 2) {
+      for (int i = 0; i < sz && res <= 1; i++) {
+        x = f(x, n);
+        res = gcd(x - y >= 0 ? x - y : y - x, n);
+      }
+      y = x;
+    }
+    if (res != 0 && res != n) return res;
   }
-  return n;
+}
+void fac(llu x, vector<llu> &ans) {
+  if (isprime(x)) ans.emplace_back(x);
+  else {
+    llu p = pollard_rho(x);
+    fac(x / p, ans); fac(p, ans);
+  }
 }

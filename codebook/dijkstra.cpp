@@ -1,10 +1,19 @@
 struct Dijkstra {
+    static const int mxN = 2e5 + 5;
     vector<pii> g[mxN];
-    int dis[mxN];
+    int dis[mxN], n;
+
+    Dijkstra(int _n) : n(_n) {
+        fill(dis, dis + n + 1, INF);	
+    }
+
+    void add_edge(int u, int v, int w) {
+        g[u].eb(v, w);
+        // g[v].eb(u, w);
+    }
 
     int dijkstra(int s, int t) {
         priority_queue<pii, vector<pii>, greater<pii>> pq;
-        fill(dis, dis + n + 1, INF);	
         dis[s] = 0; pq.push(0, s);
 
         while (!pq.empty()) {

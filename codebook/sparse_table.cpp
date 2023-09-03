@@ -7,7 +7,7 @@ void build() {
 }
 
 int query(int l, int r) {
-	int k = log2(r - l + 1);
+	int k = __lg(r - l + 1);
 	return max(st[l][k], st[r - (1<<k) + 1][k]);
 }
 

@@ -20,4 +20,3 @@ void fire() {
 		len = len * delta;
 	}
 }
-

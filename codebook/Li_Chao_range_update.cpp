@@ -1,36 +1,37 @@
-struct Line {
-	int a, b;	
-	int operator () (int x) {
-		return a * x + b;
-	}
-} seg[mxN * 5];
-const int mxR = 1e6;
+struct LC_tree {
+  struct Line {
+    pii line;
+    int ls = 0, rs = 0;
+  } seg[mxN * 15];
+  inline int cal(pii l, int x) {
+    return l.first * x + l.second;
+  }
+  int tot = 0;
 
-#define ls (id<<1)
-#define rs (ls|1)
-void insert(Line t, int l = 1, int r = mxR, int id = 1) {
-	int mid = (l+r) >> 1;
-	if (t(mid) > seg[id](mid)) swap(t, seg[id]);
-	if (l == r)  return;
-	if (t(l) > seg[id](l)) insert(t, l, mid, ls);
-	if (t(r) > seg[id](r)) insert(t, mid+1, r, rs);
-}
+  void insert(pii t, int &id, int l, int r) {
+    if (id == 0) id = ++tot;
+    int mid = (l+r) >> 1;
+    if (cal(t, mid) > cal(seg[id].line, mid)) swap(t, seg[id].line);
+    if (l == r)  return;
+    if (cal(t, l) > cal(seg[id].line, l)) insert(t, seg[id].ls, l, mid);
+    if (cal(t, r) > cal(seg[id].line, r)) insert(t, seg[id].rs, mid+1, r);
+  }
 
-void modify(Line t, int a, int b, int l, int r, int id) {
-	if (a <= l and r <= b) { 
-		insert(t, l, r, id);	
-		return;
-	}
-	int mid = (l + r) >> 1;
-	if (a <= mid) modify(t, a, b, l, mid, ls);
-	if (b > mid) modify(t, a, b, mid+1, r, rs);
-}
+  void modify(pii t, int id, int a, int b, int l, int r) {
+    if (a <= l && r <= b) {
+      insert(t, id, l, r);
+      return;
+    }
+    int mid = (l+r) >> 1;
+    if (a <= mid) modify(t, seg[id].ls, l, mid);
+    if (b > mid) modify(t, seg[id].rs, mid+1, r);
+  }
 
-int query(int p, int l = 1, int r = mxR, int id = 1) {
-	if (l == r) return seg[id](p);
-	int mid = (l+r)>>1;
-	if (p <= mid) return max(query(p, l, mid, ls), seg[id](p));
-	else return max(query(p, mid+1, r, rs), seg[id](p));
-}
-
-
+  int query(int p, int id, int l, int r) {
+    if (id == 0) return -INF;
+    if (l == r) return cal(seg[id].line, p);
+    int mid = (l+r)>>1;
+    if (p <= mid) return max(query(p, seg[id].ls, l, mid), cal(seg[id].line, p));
+    else return max(query(p, seg[id].rs, mid+1, r), cal(seg[id].line, p));
+  }
+} LCT;

@@ -27,7 +27,7 @@ typedef long long ll;
 #define uni(x) x.resize(unique(ALL(x)) - x.begin())
 #define inf 1000000000
 #define INF 1000000000000000000
-#define mod 1000000007
+#define mod 998244353
 #define get_bit(x, y) ((x>>y)&1)
 #define mkp make_pair
 #define IO ios_base::sync_with_stdio(0); cin.tie(0);
@@ -56,19 +56,42 @@ template <typename T> ostream& operator << (ostream& o, vector<T> a) {
 #define test(args...) void(0)
 #endif
 
-const int mxN = 2e6 + 5;
+const int mxN = 2e5 + 5;
+vector<int> divisor[mxN];
 
 inline void solve() {
     int n;
     string s;
     cin >> n >> s;
+    vector<int> dp(n + 1, 0), p2(n + 1);
+    p2[0] = 1;
+    for (int i = 1; i <= n; i++) p2[i] = p2[i-1] * 2 % mod;
+    for (int i = 1; i <= n; i++) 
+        for (int j = i+i; j <= n; j += i) divisor[j].eb(i);
 
-    vector<int> v;
-    for (int i = 0; i < n; i++) {
-        if (s[i] == '#') 
-            v.eb(i + 1);
 
+    for (int i = 1; i < n; i++) {
+        if (n % i) continue;
+        vector<int> vis(i, 0);
+        for (int j = 0; j < n; j++) {
+            if (s[j] == '.')
+                vis[j % i] = 1;
+        }
+        int cnt = 0;
+        for (int j : vis) cnt += j;
+
+        dp[i] = p2[i-cnt];
+
+        for (int j : divisor[i]) { 
+            if (i % j) continue;
+            dp[i] -= dp[j];
+            dp[i] %= mod;
+            if (dp[i] < 0) dp[i] += mod;
+        }
     }
+    int ans = 0;
+    for (int i = 1; i <= n; i++) ans = (ans + dp[i]) % mod;
+    cout << ans;
 }
 
 signed main() {

@@ -27,4 +27,3 @@ void MO(){
         while(r > v[i][1]) del(r--);
     }
 }
-

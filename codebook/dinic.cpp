@@ -1,90 +1,54 @@
-struct Dinic {
-    struct edge {
-        int u, v, cap, flow;
-        edge(int u, int v, int cap): u(u), v(v), cap(cap), flow(0) {}
-    };
-    vector<edge> edges;
-    vector<vector<int>> adj;
-    vector<int> level, num;
-    queue<int> q;
-    int n, s, t, cnt = 0; //To maintain the id of edges
- 
-    void init(int nn, int ss, int tt) {
-        n = nn + 1, s = ss, t = tt;
-        adj.resize(n);
-        level.resize(n);
-        num.resize(n);
-    }
- 
-    void add_edge(int u, int v, int cap) {
-    	//cout << u << " " << v << " " << cap << "\n";
-        edges.push_back({u, v, cap});
-        edges.push_back({v, u, 0});
-        adj[u].push_back(cnt++);
-        adj[v].push_back(cnt++);
-    }
- 
-    bool bfs() {
-        fill(level.begin(), level.end(), -1);
-        level[s] = 0;
-        q.push(s);
- 
-        while (!q.empty()) {
-            int u = q.front();
-            q.pop();
- 
-            for (auto eid : adj[u]) {
-                edge e = edges[eid];
- 
-                //We only pass the edge that has positive capacity
-                if (e.cap - e.flow <= 0 || level[e.v] != -1)
-                    continue;
- 
-                level[e.v] = level[u] + 1;
-                q.push(e.v);
-            }
-        }
-        //If we cannot reach t, then there is no Augmenting Path
-        return level[t] != -1;
-    }
- 
-    int dfs(int u, int now) {
-        if (now == 0)
-            return 0;
-        if (u == t)
-            return now;
- 
-        for (; num[u] < adj[u].size(); num[u]++) {
-            edge e = edges[adj[u][num[u]]];
- 
-            if (level[e.v] != level[u] + 1 || e.cap - e.flow <= 0)
-                continue;
- 
-            int f = dfs(e.v, min(now, e.cap - e.flow));
- 
-            if (!f)
-                continue;
- 
-            edges[adj[u][num[u]]].flow += f;
-            edges[adj[u][num[u]] ^ 1].flow -= f;
-            return f;
-        }
-        return 0;
-    }
- 
-    int get_flow() {
-        int res = 0, now;
- 
-        while (true) {
-            if (!bfs())
-                break;
- 
-            fill(num.begin(), num.end(), 0);
- 
-            while ((now = dfs(s, INF))) {
-                res += now;
-            }
-        }
-        return res;
-    }
-} flow;
+template <typename Cap = int64_t>
+class Dinic{
+private:
+	struct E{
+		int to, rev;
+		Cap cap;
+	};
+	int n, st, ed;
+	vector<vector<E>> G;
+	vector<int> lv, idx;
+	bool BFS(){
+		lv.assign(n, -1);
+		queue<int> bfs;
+		bfs.push(st); lv[st] = 0;
+		while (not bfs.empty()){
+			int u = bfs.front(); bfs.pop();
+			for (auto e: G[u]) {
+				if (e.cap <= 0 or lv[e.to]!=-1) continue;
+				bfs.push(e.to); lv[e.to] = lv[u] + 1;
+			}
+		}
+		return lv[ed] != -1;
+	}
+	Cap DFS(int u, Cap f){
+		if (u == ed) return f;
+		Cap ret = 0;
+		for(int &i = idx[u]; i < int(G[u].size()); ++i) {
+			auto &e = G[u][i];
+			if (e.cap <= 0 or lv[e.to]!=lv[u]+1) continue;
+			Cap nf = DFS(e.to, min(f, e.cap));
+			ret += nf; e.cap -= nf; f -= nf;
+			G[e.to][e.rev].cap += nf;
+			if (f == 0) return ret;
+		}
+		if (ret == 0) lv[u] = -1;
+		return ret;
+	}
+public:
+	void init(int n_) { G.assign(n = n_, vector<E>()); }
+	void add_edge(int u, int v, Cap c){
+		G[u].push_back({v, int(G[v].size()), c});
+		G[v].push_back({u, int(G[u].size())-1, 0});
+	}
+	Cap max_flow(int st_, int ed_){
+		st = st_, ed = ed_; Cap ret = 0;
+		while (BFS()) {
+			idx.assign(n, 0);
+			Cap f = DFS(st, numeric_limits<Cap>::max());
+			ret += f;
+			if (f == 0) break;
+		}
+		return ret;
+	}
+};
