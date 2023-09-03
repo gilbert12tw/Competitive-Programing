@@ -1,24 +1,44 @@
-int low[mxN], dfn[mxN], id[mxN], cnt, dtm;
-bitset<mxN> inst;
-vector<int> st;
+class SCC {
+private:
+  int n, num_;
+  vector<vector<int>> G, rG;
+  vector<int> ord, num;
+  vector<bool> vis;
+  void dfs(int u) {
+    if (vis[u]) return;
+    vis[u] = 1;
+    for (int v : G[u]) dfs(v);
+    ord.push_back(u);
+  }
+  void rdfs(int u) {
+    if (vis[u]) return;
+    num[u] = num_; vis[u] = 1;
+    for (int v : rG[u]) rdfs(v);
+  }
+public:
+  inline void init(int n_) {
+    n = n_, num_ = 0;
+    G.clear(); G.resize(n); rG.clear();
+    rG.resize(n); vis.clear(); vis.resize(n); num.resize(n);
+  }
+  inline void add_edge(int st, int ed) {
+    G[st].push_back(ed);
+    rG[ed].push_back(st);
+  }
+  void solve() {
+    fill(vis.begin(), vis.end(), 0);
+    for (int i = 0; i < n; ++i)
+      if (not vis[i]) dfs(i);
 
-void tarjan(int u) {
-    low[u] = dfn[u] = ++dtm;
-    st.eb(u); inst[u] = 1;
-    for(int v : g[u]) {
-        if(inst[v]) low[u] = min(low[u], dfn[v]);
-        if(dfn[v]) continue;
-        tarjan(v);
-        low[u] = min(low[u], low[v]);
+    reverse(ord.begin(), ord.end());
+    fill(vis.begin(), vis.end(), 0);
+    for (int i : ord) {
+      if (not vis[i]) {
+        rdfs(i);
+        num_++;
+      }
     }
-    if(dfn[u] == low[u]) {
-        int x;
-        do {
-            x = st.back(); st.pop_back();
-            scc[cnt].eb(x);
-            id[x] = cnt;
-            inst[x] = 0;
-        } while(x != u);
-         cnt++;
-    }
-}
+  }
+  inline int get_id(int x) { return num[x]; }
+  inline int count() { return num_; }
+} scc;

@@ -1,33 +1,45 @@
-// BCC
-int df, dep[mxN], low[mxN], bcc[mxN], cc;
-int eu[mxN], ev[mxN];
-vector<int> g[mxN], tr[mxN];
-vector<int> stk;
+class BCC {
+  int n, ecnt, bcnt;
+  vector<vector<pair<int, int>>> g;
+  vector<int> dfn, low, bcc, stk;
+  vector<bool> ap, bridge;
+  void dfs(int u, int f) {
+    dfn[u] = low[u] = dfn[f] + 1;
+    int ch = 0;
+    for (auto [v, t] : g[u]) if (bcc[t] == -1) {
+      bcc[t] = 0;stk.push_back(t);
+      if (dfn[v]) {
+        low[u] = min(low[u], dfn[v]);
+        continue;
+      }
+      ++ch, dfs(v, u);
+      low[u] = min(low[u], low[v]);
+      if (low[v] > dfn[u]) bridge[t] = true;
+      if (low[v] < dfn[u]) continue;
+      ap[u] = true;
+      while (not stk.empty()) {
+        int o = stk.back(); stk.pop_back();
+        bcc[o] = bcnt;
+        if (o == t) break;
+      }
+      bcnt += 1;
+    }
+    ap[u] = ap[u] and (ch != 1 or u != f);
+  }
 
-void tarjan(int u, int e = -1){
-	dep[u] = low[u] = ++df;
-	stk.pb(u);
-	for(int i : g[u]){
-		int v = eu[i] ^ ev[i] ^ u;
-		if (i == e) continue;
-		if(!dep[v]){
-			tarjan(v, i);
-			low[u] = min(low[u], low[v]);
-		} else {
-			low[u] = min(low[u], dep[v]);
-		}
-	}
-
-	if (dep[u] == low[u] and e != -1) {
-		while (stk.back() != u) {
-			bcc[stk.back()] = cc; stk.pop_back();
-		}
-		bcc[stk.back()] = cc++;   stk.pop_back();
-	}
-}
-
-void build_BCT() {
-	for (int u = 1; u <= n; u++) for (int v : g[u]) if (bcc[u] != bcc[eu[i] ^ ev[i] ^ u]) {
-		tr[bcc[u]].eb(bcc[eu[i] ^ ev[i] ^ u]);
-	}
-}
+public:
+  BCC(int n_) : n(n_), ecnt(0), bcnt(0), g(n), dfn(n), low(n), stk(), ap(n) {}
+  void add_edge(int u, int v) {
+    g[u].emplace_back(v, ecnt);
+    g[v].emplace_back(u, ecnt++);
+  }
+  void solve() {
+    bridge.assign(ecnt, false);
+    bcc.assign(ecnt, -1);
+    for (int i = 0; i < n; ++i)
+      if (not dfn[i]) dfs(i, i);
+  }
+  int bcc_id(int x) const { return bcc[x]; }
+  bool is_ap(int x) const { return ap[x]; }
+  bool is_bridge(int x) const { return bridge[x]; }
+};
