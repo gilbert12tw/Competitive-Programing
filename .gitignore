@@ -35,7 +35,6 @@
 *.out.dSYM
 
 # Contest
-Contest/*
 tmp/*
 
 # other repo
