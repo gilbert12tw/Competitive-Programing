@@ -5,7 +5,6 @@
 //#define loli
 using namespace std;
 typedef long long ll;
-#define int ll
 #define pii pair<int, int>
 #define X first
 #define Y second
@@ -40,7 +39,7 @@ template <typename T, typename ...U> void abc(T a, U ...b) {
 template<class T> bool ckmin(T& a, const T& b) { return b<a ? a=b, 1 : 0; }
 template<class T> bool ckmax(T& a, const T& b) { return a<b ? a=b, 1 : 0; }
 
-int BSZ = 1000;
+int BSZ = 800;
 struct Query {
   int l, r;
 };
@@ -50,31 +49,31 @@ bool cmp(Query a, Query b) {
   return a.l < b.l;
 }
 
-// 0-index
-struct Hash {
-  static const int p = 13331, q = 1e9 + 7;
-  int n;
-  vector<int> hsh, pp;
+const int mxL = 3e6 + 5;
+struct Trie {
+  signed tot = 0;
+  vector<pii> tr[mxL];
 
-  Hash(string s) {
-    n = s.size();
-    hsh.resize(n);
-    pp.resize(n);
-    hsh[0] = s[0]; pp[0] = 1;
-    for (int i = 1; i < n; i++) {
-      hsh[i] = (hsh[i-1] * p % q + s[i]) % q;
-      pp[i] = pp[i-1] * p % q;
+  vector<int> insert(string &s) {
+    signed cur = 0;
+    vector<int> res;
+    for (char c : s) {
+      signed idc = c - 'a';
+      int nxt = 0;
+      for (auto [v, al] : tr[cur]) if (al == idc) {
+        nxt = v;
+        break;
+      }
+      if (!nxt) { 
+        nxt = ++tot;
+        tr[cur].eb(nxt, idc);
+      }
+      cur = nxt;
+      res.eb(cur);
     }
-  }
-
-  int get(int l, int r) {
-    if (l == 0) return hsh[r];
-    int tmp = (hsh[r] - (hsh[l - 1] * pp[r - l + 1] % q)) % q;
-    if (tmp < 0) tmp += q;
-    return tmp;
+    return res;
   }
 };
-
 
 inline void solve(int cas) {
   int n; cin >> n;
@@ -88,12 +87,11 @@ inline void solve(int cas) {
   vector<vector<pii>> hsh(mx_L + 1, vector<pii>());
 
   for (int i = 1; i <= mx_L; i++) hsh[i].eb(-10, -1), hsh[i].eb(-10, -1);
+  Trie trie;
   for (int i = 0; i < n; i++) {
     reverse(ALL(hw[i]));
-    Hash tmp(hw[i]);
-    for (int j = 0; j < tmp.n; j++) {
-      hsh[j+1].eb(i, tmp.get(0, j));
-    }
+    vector<int> tmp = trie.insert(hw[i]);
+    for (int j = 0; j < SZ(tmp); j++) hsh[j + 1].eb(i, tmp[j]);
   }
   for (int i = 1; i <= mx_L; i++) hsh[i].eb(n + 10, -1), hsh[i].eb(n + 10, -1);
 
@@ -105,33 +103,31 @@ inline void solve(int cas) {
     mp[k].eb((Query){l-1, r-1});
   }
 
-  int ans = 0;
+  ll ans = 0;
+  int mx_ans = sqrt(n) + 1;
   for (auto [k, qry] : mp) {
     if (k > mx_L) break;
 
     sort(ALL(qry), cmp);
 
     unordered_map<int, int> cnt;
-    multiset<int> rcnt;
+    cnt.reserve(n);
+    vector<int> rcnt(mx_ans + 1, 0);
 
     vector<pii> now = hsh[k];
 
     auto add = [&](int x, int k) {
-      test(x, SZ(now));
       int hsh = now[x].S;
       if (hsh < 0) return;
-      if (cnt[hsh]) rcnt.erase(rcnt.find(cnt[hsh]));
-      cnt[hsh]++;
-      rcnt.insert(cnt[hsh]);
+      rcnt[min(mx_ans, cnt[hsh])]--;
+      rcnt[min(mx_ans, ++cnt[hsh])]++;
     };
 
     auto del = [&](int x, int k) {
-      test(x, SZ(now));
       int hsh = now[x].S;
       if (hsh < 0) return;
-      rcnt.erase(rcnt.find(cnt[hsh]));
-      cnt[hsh]--;
-      if (cnt[hsh]) rcnt.insert(cnt[hsh]);
+      rcnt[min(mx_ans, cnt[hsh])]--;
+      rcnt[min(mx_ans, --cnt[hsh])]++;
     };
 
     int l = 1, r = 0;
@@ -140,22 +136,15 @@ inline void solve(int cas) {
       while (r < SZ(now) && now[r + 1].F <= qr) add(++r, k);
       while (now[l].F < ql) del(l++, k);
       while (now[r].F > qr) del(r--, k);
-      test(l, r);
       
-      if (rcnt.empty()) continue;
-      auto it = rcnt.begin();
-      int i = 1;
-
-      test(ql, qr);
-      while (*it >= i) {
-        test(*it);
-        i++;
-        it = next(it);
-        if (it == rcnt.end()) break;
-        if (*it < i) it = rcnt.lower_bound(i);
-        if (it == rcnt.end()) break;
+      int res = 0, reser = 1;
+      for (int i = 1; i <= mx_ans; i++) {
+        int mn = min(reser, rcnt[i]);
+        res += mn;
+        reser -= mn;
+        reser += 1;
       }
-      ans += (i - 1);
+      ans += (res);
     }
   }
 
