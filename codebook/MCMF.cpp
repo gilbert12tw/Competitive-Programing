@@ -12,10 +12,8 @@ struct MCMF {
   // longest path by SPFA
   inline int SPFA(int s, int t, int &ans, int &mxflow) {
     vector<int> dis(mxN, -INF), from(mxN, 0), in(mxN, 0), lim(mxN, 0);
-    dis[s] = 0;
-    lim[s] = INF;
-    queue<int> q;
-    q.push(s);
+    dis[s] = 0; lim[s] = INF;
+    queue<int> q; q.push(s);
     while (!q.empty()) {
       int u = q.front(); q.pop();
       in[u] = 0;
@@ -31,13 +29,12 @@ struct MCMF {
       }
     }
     if (dis[t] <= -INF) return 0;
-    int flcnt = lim[t];
+    int flcnt = lim[t]; // or ans += dis[t]
     ans += dis[t] * flcnt;
     mxflow += flcnt;
     while (t != s) {
       int e = from[t];	
-      cap[e] -= flcnt;
-      cap[e^1] += flcnt; 
+      cap[e] -= flcnt; cap[e^1] += flcnt; 
       t = eu[e];
     }
     return 1;

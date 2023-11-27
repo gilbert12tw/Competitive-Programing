@@ -49,31 +49,30 @@ bool cmp(Query a, Query b) {
   return a.l < b.l;
 }
 
-const int mxL = 3e6 + 5;
-struct Trie {
-  signed tot = 0;
-  vector<pii> tr[mxL];
+// 0-index
+struct Hash {
+  static const int p = 13331, q = 1e9 + 7;
+  vector<int> hsh, pp;
 
-  vector<int> insert(string &s) {
-    signed cur = 0;
-    vector<int> res;
-    for (char c : s) {
-      signed idc = c - 'a';
-      int nxt = 0;
-      for (auto [v, al] : tr[cur]) if (al == idc) {
-        nxt = v;
-        break;
-      }
-      if (!nxt) { 
-        nxt = ++tot;
-        tr[cur].eb(nxt, idc);
-      }
-      cur = nxt;
-      res.eb(cur);
+  Hash(string s) {
+    int n = s.size();
+    hsh.resize(n);
+    pp.resize(n);
+    hsh[0] = s[0]; pp[0] = 1;
+    for (int i = 1; i < n; i++) {
+      hsh[i] = (hsh[i-1] * p % q + s[i]) % q;
+      pp[i] = pp[i-1] * p % q;
     }
-    return res;
+  }
+
+  int get(int l, int r) {
+    if (l == 0) return hsh[r];
+    int tmp = (hsh[r] - (hsh[l - 1] * pp[r - l + 1] % q)) % q;
+    if (tmp < 0) tmp += q;
+    return tmp;
   }
 };
+
 
 inline void solve(int cas) {
   int n; cin >> n;
@@ -87,11 +86,11 @@ inline void solve(int cas) {
   vector<vector<pii>> hsh(mx_L + 1, vector<pii>());
 
   for (int i = 1; i <= mx_L; i++) hsh[i].eb(-10, -1), hsh[i].eb(-10, -1);
-  Trie trie;
   for (int i = 0; i < n; i++) {
     reverse(ALL(hw[i]));
-    vector<int> tmp = trie.insert(hw[i]);
-    for (int j = 0; j < SZ(tmp); j++) hsh[j + 1].eb(i, tmp[j]);
+    Hash tmp(hw[i]);
+    for (int j = 0; j < SZ(hw[i]); j++) 
+      hsh[j+1].eb(i, tmp.get(0, j));
   }
   for (int i = 1; i <= mx_L; i++) hsh[i].eb(n + 10, -1), hsh[i].eb(n + 10, -1);
 
